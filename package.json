@@ -1,0 +1,11 @@
+{
+  "name": "volumetric_rendering",
+  "version": "0.0.1",
+  "description": "Volumetric data visualization",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Attila Molnar",
+  "license": "ISC"
+}
