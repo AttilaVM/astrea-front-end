@@ -4,11 +4,11 @@ stdenv.mkDerivation rec {
   shellHook = ''
     npm install
 
-    echo -e "\e[32m\e[1m Start Chromium with remote debuging"
-    chromium --remote-debugging-port=9222 https://localhost:8000 &> ./chromium.log &
+    echo -e "\e[32m Start Chromium with remote debuging"
+    # chromium --remote-debugging-port=9222 https://localhost:8000 &> ./chromium.log &
 
-    echo -e "\e[32m\e[1m Start gulp runner"
-    gulp
+    echo -e "\e[32m To start task runner, type \e[1mgulp\e[0m"
+
 
 
 '';

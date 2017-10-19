@@ -61,3 +61,5 @@ function main() {
 
 		slicer(imgData, 256, 10);
 }
+
+// Renderer
