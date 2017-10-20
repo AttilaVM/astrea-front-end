@@ -8,6 +8,10 @@
 
 ## Sources ##
 
+### three.js examples ###
+
+* kinect
+
 ### Basic ###
 - https://en.wikipedia.org/wiki/Scalar_field
 - https://en.wikipedia.org/wiki/Voxel

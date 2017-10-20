@@ -1,69 +1,113 @@
-const THREE = require("three");
-// Performance monitioring
-const Stats = require("stats-js");
+// external
+import { apply
+         , map
+         , multiply
+       } from "ramda";
+import Stats from "stats-js";
+import
+{ Scene
+  , WebGLRenderer
+  , Vector3
+  , Color
+  , VertexColors
+  , PerspectiveCamera
+  , Geometry
+  , Points
+  , PointsMaterial
+  , AdditiveBlending
+} from "three";
+// internal
+import { scaleInCubeScaler } from "./geometry-utils";
+import { optimalParticleSize } from "./particle-utils";
 
-function voxelWalker(voxelData, size, geometry) {
-    [x_size, y_size, z_size] = size;
-    for (var x = 0; x < x_size; x++) {
-	for (var y = 0; y < y_size; y++) {
-	    for (var z = 0; z < z_size; z++) {
-		let pos = z * z_size * y_size + y * x_size + x;
-		let vertex = new THREE.Vector3(x, y, z);
-		geometry.push(vertex);
-	    }
-	}
+function voxelWalker(voxelData, size, scaler, geometry) {
+  const [x_size, y_size, z_size] = size;
+  for (let z = 0; z < z_size; z++) {
+    for (let y = 0; y < y_size; y++) {
+      for (let x = 4; x < x_size * 4; x += 4) {
+        // build geometry
+        let vertex = new Vector3(
+          x / 4 * scaler
+          , y * scaler
+          , z * scaler);
+        geometry.vertices.push(vertex);
+        // assign vertex colors
+        let pos = z * y_size * x_size + y * x_size + x;
+        let r = voxelData[pos-4];
+        let g = voxelData[pos-3];
+        let b = voxelData[pos-2];
+        let a = voxelData[pos-1];
+        let colorStr = `rgb(${r}, ${g}, ${b})`;
+        let color = new Color(colorStr);
+        geometry.colors.push(color);
+      }
     }
-    return geometry;
-};
+  }
+  console.log(geometry);
+  return geometry;
+}
 
 export function initCellvis(containerElem, voxelData, voxelDimensions, metaData) {
-    let canvasWidth = containerElem.offsetWidth;
-    let canvasHeight = containerElem.offsetHeight;
-    // Basic scene setup
-    const scene = new THREE.Scene();
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(canvasWidth, canvasHeight);
-    /// Adapt to displays with different pixel densities
-    renderer.setPixelRatio(devicePixelRatio);
-    /// Append canvas, gui and performance monitior
-    containerElem.appendChild(renderer.domElement);
-    const stats = new Stats();
-    stats.domElement.style.position = "absolute";
-    stats.domElement.style.top = "0px";
-    containerElem.appendChild(stats.domElement);
-    const camera =
-	  new THREE.PerspectiveCamera( 75
-				     , canvasWidth / canvasHeight
-				     , 0.1
-				     , 1000);
-    camera.name = "p-camera";
-    camera.position.x = 0;
-    camera.position.y = 0;
-    camera.position.z = 10;
-    // Stack setup
-    const stackGeometry =
-	  new THREE.Geometry();
-	voxelWalker(voxelData, voxelDimensions, stackGeometry);
-    const particleMaterial =
-	  new THREE.ParticleBasicMaterial({ color: 0xafaf00
-					  , size: 3
-					  });
-    const particleSystem =
-	  new THREE.ParticleSystem(stackGeometry, particleMaterial);
-    // Populate Scene
-    scene.add(particleSystem);
-    scene.add(camera);
+  let canvasWidth = containerElem.offsetWidth;
+  let canvasHeight = containerElem.offsetHeight;
+  let canvasRatio = canvasWidth / canvasHeight;
+  // Basic scene setup
+  const scene = new Scene();
+  const renderer = new WebGLRenderer();
+  renderer.setSize(canvasWidth, canvasHeight);
+  /// Adapt to displays with different pixel densities
+  renderer.setPixelRatio(devicePixelRatio);
+  /// Append canvas, gui and performance monitior
+  containerElem.appendChild(renderer.domElement);
+  const stats = new Stats();
+  stats.domElement.style.position = "absolute";
+  stats.domElement.style.top = "0px";
+  containerElem.appendChild(stats.domElement);
+  const camera =
+    new PerspectiveCamera( 75, canvasRatio , 0.1, 1000);
+  camera.name = "p-camera";
+  camera.position.x = 50;
+  camera.position.y = 50;
+  camera.position.z = 120;
+  // Stack setup
+  /// Calculate constants
+  const inCubeScaler = scaleInCubeScaler(100, voxelDimensions);
+  const scaledVoxelSize =  map(multiply(inCubeScaler), voxelDimensions);
+  const particleSize = optimalParticleSize(voxelDimensions);
+  const stackGeometry = new Geometry();
+  console.log(inCubeScaler, particleSize);
+  voxelWalker(
+    voxelData
+    , voxelDimensions
+    , inCubeScaler
+    , stackGeometry
+  );
+  const particleMaterial =
+    new PointsMaterial({
+      color: 0xffffff
+      , size: particleSize
+      , lights: false
+      , vertexColors: VertexColors
+      , transparent: true
+      , blending: AdditiveBlending
+    });
+  const particleSystem =
+        new Points(stackGeometry, particleMaterial);
+  // particleSystem.sortP
+  // Populate Scene
+  scene.add(particleSystem);
+  scene.add(camera);
 
 
 
-    function render() {
-	renderer.render(scene, camera);
-    }
+  function render() {
+    renderer.render(scene, camera);
+  }
 
-    function animate() {
-	requestAnimationFrame(animate);
-	render();
-    }
+  function animate() {
+    requestAnimationFrame(animate);
+    render();
+  }
 
-    animate();
+  animate();
 }
