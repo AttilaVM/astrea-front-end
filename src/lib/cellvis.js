@@ -4,6 +4,7 @@ import { apply
          , multiply
        } from "ramda";
 import Stats from "stats-js";
+// import Gui from "dat.gui";
 import
 { Scene
   , WebGLRenderer
@@ -19,6 +20,7 @@ import
 // internal
 import { scaleInCubeScaler } from "./geometry-utils";
 import { optimalParticleSize } from "./particle-utils";
+import { registerTrackballControl } from "./control/trackball";
 
 function voxelWalker(voxelData, size, scaler, geometry) {
   const [x_size, y_size, z_size] = size;
@@ -53,6 +55,7 @@ export function initCellvis(containerElem, voxelData, voxelDimensions, metaData)
   let canvasRatio = canvasWidth / canvasHeight;
   // Basic scene setup
   const scene = new Scene();
+  scene.background = new Color(0x232323);
   const renderer = new WebGLRenderer();
   renderer.setSize(canvasWidth, canvasHeight);
   /// Adapt to displays with different pixel densities
@@ -72,8 +75,9 @@ export function initCellvis(containerElem, voxelData, voxelDimensions, metaData)
   // Stack setup
   /// Calculate constants
   const inCubeScaler = scaleInCubeScaler(100, voxelDimensions);
-  const scaledVoxelSize =  map(multiply(inCubeScaler), voxelDimensions);
-  const particleSize = optimalParticleSize(voxelDimensions);
+  const geoSize =  map(multiply(inCubeScaler), voxelDimensions);
+  const particleSize = optimalParticleSize(voxelDimensions, geoSize);
+  console.log("p-szie", particleSize);
   const stackGeometry = new Geometry();
   console.log(inCubeScaler, particleSize);
   voxelWalker(
@@ -84,7 +88,7 @@ export function initCellvis(containerElem, voxelData, voxelDimensions, metaData)
   );
   const particleMaterial =
     new PointsMaterial({
-      color: 0xffffff
+      color: 0x6fa2ff
       , size: particleSize
       , lights: false
       , vertexColors: VertexColors
@@ -104,10 +108,17 @@ export function initCellvis(containerElem, voxelData, voxelDimensions, metaData)
     renderer.render(scene, camera);
   }
 
+  const controls = registerTrackballControl(camera, render);
+
+
   function animate() {
     requestAnimationFrame(animate);
-    render();
+    // Only re-render on control events
+    controls.update();
+
   }
 
+  // render initial frame
+  render();
   animate();
 }
