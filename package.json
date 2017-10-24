@@ -36,7 +36,10 @@
     "watchify": "^3.9.0"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
     "dat.gui": "^0.6.1",
+    "js-csp": "^1.0.1",
     "ramda": "^0.25.0",
     "stats-js": "^1.0.0-alpha1",
     "three": "^0.87.1",

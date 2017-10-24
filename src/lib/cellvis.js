@@ -8,48 +8,17 @@ import Stats from "stats-js";
 import
 { Scene
   , WebGLRenderer
-  , Vector3
   , Color
-  , VertexColors
   , PerspectiveCamera
-  , Geometry
-  , Points
-  , PointsMaterial
-  , AdditiveBlending
+  , AxisHelper
 } from "three";
 // internal
+import { VoxelGenerator } from "./processing/stack-processing.js";
 import { scaleInCubeScaler } from "./geometry-utils";
-import { optimalParticleSize } from "./particle-utils";
+import { buildParticleSystem } from "./build/particle-system";
 import { registerTrackballControl } from "./control/trackball";
 
-function voxelWalker(voxelData, size, scaler, geometry) {
-  const [x_size, y_size, z_size] = size;
-  for (let z = 0; z < z_size; z++) {
-    for (let y = 0; y < y_size; y++) {
-      for (let x = 4; x < x_size * 4; x += 4) {
-        // build geometry
-        let vertex = new Vector3(
-          x / 4 * scaler
-          , y * scaler
-          , z * scaler);
-        geometry.vertices.push(vertex);
-        // assign vertex colors
-        let pos = z * y_size * x_size + y * x_size + x;
-        let r = voxelData[pos-4];
-        let g = voxelData[pos-3];
-        let b = voxelData[pos-2];
-        let a = voxelData[pos-1];
-        let colorStr = `rgb(${r}, ${g}, ${b})`;
-        let color = new Color(colorStr);
-        geometry.colors.push(color);
-      }
-    }
-  }
-  console.log(geometry);
-  return geometry;
-}
-
-export function initCellvis(containerElem, voxelData, voxelDimensions, metaData) {
+export function initCellvis(containerElem, voxelData, voxelDimensions, zScaler, metaData) {
   let canvasWidth = containerElem.offsetWidth;
   let canvasHeight = containerElem.offsetHeight;
   let canvasRatio = canvasWidth / canvasHeight;
@@ -66,43 +35,20 @@ export function initCellvis(containerElem, voxelData, voxelDimensions, metaData)
   stats.domElement.style.position = "absolute";
   stats.domElement.style.top = "0px";
   containerElem.appendChild(stats.domElement);
+  const axes = new AxisHelper(20);
   const camera =
-    new PerspectiveCamera( 75, canvasRatio , 0.1, 1000);
+    new PerspectiveCamera( 75, canvasRatio , 0.1, 3000);
   camera.name = "p-camera";
   camera.position.x = 50;
   camera.position.y = 50;
   camera.position.z = 120;
   // Stack setup
-  /// Calculate constants
-  const inCubeScaler = scaleInCubeScaler(100, voxelDimensions);
-  const geoSize =  map(multiply(inCubeScaler), voxelDimensions);
-  const particleSize = optimalParticleSize(voxelDimensions, geoSize);
-  console.log("p-szie", particleSize);
-  const stackGeometry = new Geometry();
-  console.log(inCubeScaler, particleSize);
-  voxelWalker(
-    voxelData
-    , voxelDimensions
-    , inCubeScaler
-    , stackGeometry
-  );
-  const particleMaterial =
-    new PointsMaterial({
-      color: 0x6fa2ff
-      , size: particleSize
-      , lights: false
-      , vertexColors: VertexColors
-      , transparent: true
-      , blending: AdditiveBlending
-    });
-  const particleSystem =
-        new Points(stackGeometry, particleMaterial);
-  // particleSystem.sortP
+  const particleSystem = buildParticleSystem(voxelData
+                                             , voxelDimensions);
   // Populate Scene
+  scene.add(axes);
   scene.add(particleSystem);
   scene.add(camera);
-
-
 
   function render() {
     renderer.render(scene, camera);

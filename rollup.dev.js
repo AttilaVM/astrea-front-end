@@ -35,7 +35,10 @@ export default {
       exclude: [
         "src/styles/**"
       ]})
-    , babel({exclude: "node_modules/**"})
+    , babel({ babelrc: false
+              , presets: ['es2015-rollup']
+       , exclude: "node_modules/**"
+    })
     // , commonjs({
     //   include: 'node_modules/**'
     // })

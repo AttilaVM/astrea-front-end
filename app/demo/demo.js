@@ -1,7 +1,7 @@
-var imgData = CellVis.fetchVoxelData("/img/voxeldata/generated-1.png", "generated-1.json").then((values) => {
-  [rgbaArr, sampleData] = values;
+var imgData = CellVis.fetchVoxelData("/img/voxeldata/substack.png", "substack.json").then((values) => {
+  const [rgbaArr, sampleData] = values;
   const containerElem = document.getElementById("canvas_container");
-  CellVis.initCellvis(containerElem, rgbaArr, sampleData.scale, sampleData.metaData);
+  CellVis.initCellvis(containerElem, rgbaArr, sampleData.scale, sampleData.zScaler, sampleData.metaData);
 
 
 }).catch((err) => {
