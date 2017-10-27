@@ -1,9 +1,22 @@
-var imgData = CellVis.fetchVoxelData("/img/voxeldata/generated-2.png", "generated-2.json").then((values) => {
-  const [rgbaArr, sampleData] = values;
+var imgData = CellVis.fetchFiles(
+  "/img/voxeldata/generated-2.png"
+  , "generated-2.json"
+  , "shaders/volumetric-vertex.glsl"
+  , "shaders/volumetric-fragment.glsl").then((values) => {
+    const [voxelImg
+           , sampleData
+           , vertexShader
+           , fragmentShader] = values;
   const containerElem = document.getElementById("canvas_container");
-  CellVis.initCellvis(containerElem, rgbaArr, sampleData.scale, sampleData.zScaler, sampleData.metaData);
+  CellVis.initCellvis(containerElem
+                      , voxelImg.data
+                      , sampleData.scale
+                      , sampleData.zScaler
+                      , sampleData.metaData
+                      , vertexShader
+                      , fragmentShader);
 
 
 }).catch((err) => {
-  console.log(err);
+  console.error(err);
 });

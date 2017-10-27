@@ -17,6 +17,7 @@ import { buildGeometry } from "./general-builder";
 import { scaleInCubeScaler } from "../geometry-utils";
 import { optimalParticleSize } from "../particle-utils";
 import { voxelBuilder } from "../processing/stack-processing.js";
+import { createCostumShader } from "../shaders/costum-shader";
 
 
 export function buildParticleSystem(voxelData
@@ -37,6 +38,7 @@ export function buildParticleSystem(voxelData
                , zScaler
                , stackGeometry);
   console.log(stackGeometry);
+  createCostumShader("volumetric-vertex", "volumetric-fragment");
   const particleMaterial =
     new PointsMaterial({
       color: 0x6fa2ff

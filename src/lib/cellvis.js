@@ -18,7 +18,14 @@ import { scaleInCubeScaler } from "./geometry-utils";
 import { buildParticleSystem } from "./build/particle-system";
 import { registerTrackballControl } from "./control/trackball";
 
-export function initCellvis(containerElem, voxelData, voxelDimensions, zScaler, metaData) {
+export function initCellvis(containerElem
+                            , voxelData
+                            , voxelDimensions
+                            , zScaler
+                            , metaData
+                            , vertexShader
+                            , fragmentShader) {
+  console.log(vertexShader, fragmentShader);
   let canvasWidth = containerElem.offsetWidth;
   let canvasHeight = containerElem.offsetHeight;
   let canvasRatio = canvasWidth / canvasHeight;

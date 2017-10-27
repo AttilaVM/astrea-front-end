@@ -1,2 +1,2 @@
 export { initCellvis } from "./lib/cellvis";
-export { fetchVoxelData } from "./lib/image_loader";
+export { fetchFiles } from "./lib/image_loader";
