@@ -38,7 +38,7 @@ export function fetchFiles() {
       });
     }
     // on JSON
-    if (url.match(/.*\.json/i)) {
+    else if (url.match(/.*\.json/i)) {
       promises[i] = new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = () => {
@@ -53,7 +53,7 @@ export function fetchFiles() {
     }
     // on Others
     else {
-      new Promise((resolve, reject) => {
+      promises[i] = new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = () => {
           resolve(xhr.responseText);
