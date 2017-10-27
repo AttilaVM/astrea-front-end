@@ -21,6 +21,7 @@ import { voxelBuilder } from "../processing/stack-processing.js";
 
 export function buildParticleSystem(voxelData
                                     , voxelDimensions
+                                    , zScaler
                                    ) {
   /// Calculate constants
   const inCubeScaler = scaleInCubeScaler(100, voxelDimensions);
@@ -33,6 +34,7 @@ export function buildParticleSystem(voxelData
   voxelBuilder(voxelData
                , voxelDimensions
                , inCubeScaler
+               , zScaler
                , stackGeometry);
   console.log(stackGeometry);
   const particleMaterial =

@@ -3,5 +3,6 @@
   "thumbSrc": "img/thumb/generated-1.png",
   "voxelSrc": "img/voxeldata/generated-1.png",
   "scale": [8, 8, 8],
+  "zScaler": 1,
   "metaData": {}
 }

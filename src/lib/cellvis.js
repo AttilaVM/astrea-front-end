@@ -44,7 +44,8 @@ export function initCellvis(containerElem, voxelData, voxelDimensions, zScaler, 
   camera.position.z = 120;
   // Stack setup
   const particleSystem = buildParticleSystem(voxelData
-                                             , voxelDimensions);
+                                             , voxelDimensions
+                                             , zScaler);
   // Populate Scene
   scene.add(axes);
   scene.add(particleSystem);

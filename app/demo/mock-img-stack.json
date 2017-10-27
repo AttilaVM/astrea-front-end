@@ -3,5 +3,6 @@
   "thumbSrc": "img/thumb/mock-img-stack.png",
   "voxelSrc": "img/voxeldata/mock-img-stack.png",
   "scale": [256, 256, 99],
+  "zScaler": 1,
   "metaData": {}
 }
