@@ -8,7 +8,7 @@ import
   , VertexColors
   , Geometry
   , Points
-  , PointsMaterial
+  , ShaderMaterial
   , CustomBlending
   , MaxEquation
 } from "three";
@@ -17,17 +17,20 @@ import { buildGeometry } from "./general-builder";
 import { scaleInCubeScaler } from "../geometry-utils";
 import { optimalParticleSize } from "../particle-utils";
 import { voxelBuilder } from "../processing/stack-processing.js";
+import { createCostumShader } from "../shaders/costum-shader";
 
-export function buildParticleSystem(voxelData
-                                    , voxelDimensions
-                                    , zScaler
+
+export function buildVoxelBox(
+  voxelData
+  , voxelDimensions
+  , zScaler
+  , vertexShader
+  , fragmentShader
                                    ) {
   /// Calculate constants
   const inCubeScaler = scaleInCubeScaler(100, voxelDimensions);
   const boundingBoxSize =
         map(multiply(inCubeScaler), voxelDimensions);
-  const particleSize =
-        optimalParticleSize(voxelDimensions, boundingBoxSize);
   let geo = new Geometry();
   let stackGeometry = new Geometry();
   voxelBuilder(voxelData
@@ -35,19 +38,17 @@ export function buildParticleSystem(voxelData
                , inCubeScaler
                , zScaler
                , stackGeometry);
-  console.log(stackGeometry);
-  const particleMaterial =
-    new PointsMaterial({
-      color: 0x6fa2ff
-      , size: particleSize
-      , lights: false
-      , vertexColors: VertexColors
-      , transparent: true
-      , blending: CustomBlending
-      , depthWrite: false
-    });
-  particleMaterial.blendEquation = MaxEquation;
-  const particleSystem =
-        new Points(stackGeometry, particleMaterial);
-  return particleSystem;
+  // Instanciate costum material
+  const uniforms = {
+    voxelSize: {value: 1.0}
+    , discardThreshold: {value: 0.3}
+  };
+  const volumetricMaterial = new ShaderMaterial({
+    uniforms: uniforms
+    , vertexShader
+    , fragmentShader
+  });
+  const voxelBox =
+        new Points(stackGeometry, volumetricMaterial);
+  return voxelBox;
 }

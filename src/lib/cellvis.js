@@ -16,6 +16,7 @@ import
 import { VoxelGenerator } from "./processing/stack-processing.js";
 import { scaleInCubeScaler } from "./geometry-utils";
 import { buildParticleSystem } from "./build/particle-system";
+import { buildVoxelBox } from "./build/voxel-box";
 import { registerTrackballControl } from "./control/trackball";
 
 export function initCellvis(containerElem
@@ -25,7 +26,6 @@ export function initCellvis(containerElem
                             , metaData
                             , vertexShader
                             , fragmentShader) {
-  console.log(vertexShader, fragmentShader);
   let canvasWidth = containerElem.offsetWidth;
   let canvasHeight = containerElem.offsetHeight;
   let canvasRatio = canvasWidth / canvasHeight;
@@ -50,12 +50,18 @@ export function initCellvis(containerElem
   camera.position.y = 50;
   camera.position.z = 120;
   // Stack setup
-  const particleSystem = buildParticleSystem(voxelData
-                                             , voxelDimensions
-                                             , zScaler);
+  // const particleSystem = buildParticleSystem(voxelData
+  //                                            , voxelDimensions
+  //                                            , zScaler);
+  const voxelBox = buildVoxelBox(voxelData
+                                 , voxelDimensions
+                                 , zScaler
+                                 , vertexShader
+                                 , fragmentShader);
   // Populate Scene
   scene.add(axes);
-  scene.add(particleSystem);
+  // scene.add(particleSystem);
+  scene.add(voxelBox);
   scene.add(camera);
 
   function render() {
