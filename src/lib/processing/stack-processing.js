@@ -5,6 +5,14 @@ import
   , Color
 } from "three";
 
+export function getColor(pos, rgbaArr) {
+  let r = rgbaArr[pos];
+  let g = rgbaArr[pos + 1];
+  let b = rgbaArr[pos + 2];
+  let a = rgbaArr[pos + 3];
+  let colorStr = `rgb(${r}, ${g}, ${b})`;
+  return new Color(colorStr);
+}
 
 export function VoxelGenerator(rgbaArr, size, scaler) {
   const [x_size, y_size, z_size] = size;
@@ -43,7 +51,13 @@ export function VoxelGenerator(rgbaArr, size, scaler) {
  * @param {Number} zScaler to fix z distortion.
  * @return  {Object} which "vertices" and "colors" property array are populate with the voxel coordinates and colors.
  */
-export function voxelBuilder(rgbaArr, size, scaler, zScaler, geo) {
+export function voxelBuilder(
+  rgbaArr
+  , size
+  , scaler
+  , zScaler
+  , geo
+  , vColorP) {
   const [x_size, y_size, z_size] = size;
   let x, y, z;
   x = y = z = 0;
@@ -58,19 +72,15 @@ export function voxelBuilder(rgbaArr, size, scaler, zScaler, geo) {
       }
     }
     let coordinates = new Vector3(
-        x * scaler - 50
-      , y * scaler - 50
-      , z * scaler * zScaler - 50);
-    // console.log(x, y, z);
-    let r = rgbaArr[pos];
-    let g = rgbaArr[pos + 1];
-    let b = rgbaArr[pos + 2];
-    let a = rgbaArr[pos + 3];
-    let colorStr = `rgb(${r}, ${g}, ${b})`;
-    let color = new Color(colorStr);
-    // update geometry
+        x * scaler //- 50
+      , y * scaler //- 50
+      , z * scaler * zScaler // - 50
+    );
     geo.vertices.push(coordinates);
-    geo.colors.push(color);
+    if (vColorP) {
+      let color = getColor(pos, rgbaArr);
+      geo.colors.push(color);
+    }
     x++;
   };
   return geo;

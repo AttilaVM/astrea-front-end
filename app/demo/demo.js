@@ -1,6 +1,6 @@
 var imgData = CellVis.fetchFiles(
-  "/img/voxeldata/generated-2.png"
-  , "generated-2.json"
+  "/img/voxeldata/generated-3.png"
+  , "generated-3.json"
   , "shaders/volumetric-vertex.glsl"
   , "shaders/volumetric-fragment.glsl").then((values) => {
     const [voxelImg

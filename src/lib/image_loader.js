@@ -28,7 +28,6 @@ export function fetchFiles() {
       promises[i] = new Promise((resolve, reject) => {
         const image = new Image();
         image.onload = (event) => {
-          console.log(event);
           resolve(getImgData(image));
         };
         image.onerror = (err) => {

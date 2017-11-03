@@ -1,9 +1,10 @@
-import { apply
-         , map
-         , multiply
-       } from "ramda";
-import
-{ Scene
+import {
+  apply
+  , map
+  , multiply
+} from "ramda";
+import{
+  Scene
   , Color
   , VertexColors
   , Geometry
@@ -18,10 +19,11 @@ import { scaleInCubeScaler } from "../geometry-utils";
 import { optimalParticleSize } from "../particle-utils";
 import { voxelBuilder } from "../processing/stack-processing.js";
 
-export function buildParticleSystem(voxelData
-                                    , voxelDimensions
-                                    , zScaler
-                                   ) {
+export function buildParticleSystem(
+  voxelData
+  , voxelDimensions
+  , zScaler
+) {
   /// Calculate constants
   const inCubeScaler = scaleInCubeScaler(100, voxelDimensions);
   const boundingBoxSize =
@@ -30,11 +32,12 @@ export function buildParticleSystem(voxelData
         optimalParticleSize(voxelDimensions, boundingBoxSize);
   let geo = new Geometry();
   let stackGeometry = new Geometry();
-  voxelBuilder(voxelData
-               , voxelDimensions
-               , inCubeScaler
-               , zScaler
-               , stackGeometry);
+  voxelBuilder(
+    voxelData
+    , voxelDimensions
+    , inCubeScaler
+    , zScaler
+    , stackGeometry);
   console.log(stackGeometry);
   const particleMaterial =
     new PointsMaterial({
