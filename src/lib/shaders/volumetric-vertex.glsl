@@ -1,8 +1,11 @@
-varying vec3 vColor;
+varying vec2 vUv;
+uniform float globalTime;
+varying float time;
+uniform sampler2D volTexture;
 
 void main() {
-  #include <color_vertex>
-  // vColor = color;
+  vUv = uv;
+  time = globalTime;
   gl_Position =
     projectionMatrix
     * modelViewMatrix
