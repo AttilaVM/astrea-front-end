@@ -47,11 +47,8 @@ export function initCellvis(containerElem
   renderer.setSize(canvasWidth, canvasHeight);
   /// Adapt to displays with different pixel densities
   renderer.setPixelRatio(devicePixelRatio);
-  /// Append canvas, gui and performance monitior
-  let appData = new AppData();
-  let gui = new dat.GUI();
-  gui.addColor(appData, "color");
-  gui.add(appData, "test", 0.0, 10.0);
+  /// Append canvas
+
   containerElem.appendChild(renderer.domElement);
   const stats = new Stats();
   stats.domElement.style.position = "absolute";
@@ -106,12 +103,19 @@ export function initCellvis(containerElem
       {value: appData.test};
   }
 
-  const controls = registerTrackballControl(camera, render);
+  let appData = new AppData();
+  let gui = new dat.GUI();
+  gui.addColor(appData, "color").onFinishChange(render);
+  gui.add(appData, "test", 0.0, 10.0).onFinishChange(render);
+
+  const controls = registerTrackballControl(
+    camera
+    , render
+    , renderer);
 
 
   function animate() {
     requestAnimationFrame(animate);
-    render();
     // Only re-render on control events
     controls.update();
 
