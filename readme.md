@@ -1,10 +1,10 @@
 # TODO #
-- [x] Get sample volume data from [Stanford's database](https://graphics.stanford.edu/data/voldata/)
-- [ ] compress,
-- [ ] Generate a cheksum, stream data to the front-end, check integrity
-- [ ] decompress
-- [ ] Decode data to pure voxel representation.
-- [ ] Find or write a volumetric renderer, preferebly Three.js base.
+
+- [X] Decode data to pure voxel representation.
+- [X] Write a particle base volume renderer.
+- [ ] Write a Three.js based volumetric renderer.
+- [ ] Discover a possibility of mipmaping
+- [ ] Write slicer shader.
 
 ## Sources ##
 

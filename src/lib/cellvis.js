@@ -8,7 +8,7 @@ import Stats from "stats-js";
 import
 { Scene
   , WebGLRenderer
-  , Vector2
+  , Vector3
   , Color
   , PerspectiveCamera
   , AxisHelper
@@ -19,6 +19,7 @@ import
   , ImageUtils
   , ShaderMaterial
   , Mesh
+  , NearestFilter
 } from "three";
 // internal
 import { VoxelGenerator } from "./processing/stack-processing.js";
@@ -28,12 +29,7 @@ import { buildVoxelBox } from "./build/voxel-box";
 import { registerTrackballControl } from "./control/trackball";
 import { registerGui } from "./gui";
 
-function AppData() {
-  this.ambient = Math.E;
-  this.xNormal = 0;
-  this.yNormal = 0;
-  this.test = 0.5;
-}
+
 
 export function initCellvis(containerElem
                             , voxelData
@@ -42,6 +38,17 @@ export function initCellvis(containerElem
                             , metaData
                             , vertexShader
                             , fragmentShader) {
+  function AppData() {
+    // Development sate
+    this.xNormal = 0;
+    this.yNormal = 0;
+    this.zNormal = 1;
+    this.test = 0.5;
+    // Production state
+    this.ambient = Math.E;
+    this.begSlice = 0;
+    this.endSlice = voxelDimensions[2];
+  }
   let appData = new AppData();
 
   let canvasWidth = containerElem.offsetWidth;
@@ -67,18 +74,27 @@ export function initCellvis(containerElem
   camera.name = "p-camera";
   camera.position.x = 0;
   camera.position.y = 0;
-  camera.position.z = 3;
+  camera.position.z = 2.6;
+  // camera.rotation.x += Math.PI;
+  // camera.rotation.y += Math.PI;
+
   const viewBoxGeo = new BoxBufferGeometry(2, 2, 2);
+  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/generated-4.png");
+  volTexture.minFilter = NearestFilter;
   const uniforms = {
     voxelSize: {value: 1.0}
     , globalTime: {value: Date.now()}
+    , begSlice: {type: "i", value: 1}
+    , endSlice: {type: "i", value: voxelDimensions[2] + 1}
     , sliceUvRatio: {value: 1.0/voxelDimensions[2]}
     , sliceDistance: {value: 2 / voxelDimensions[2]}
     , discardThreshold: {value: 0.3}
     , ambient: { value: appData.ambient }
-    , rayV: {type: "2fv", value: new Vector2(appData.xNormal
-                                             , appData.yNormal)}
-    , volTexture: { type: "t", value: ImageUtils.loadTexture( "/img/voxeldata/generated-4.png" ) }
+    , rayV: {type: "3fv", value: new Vector3(
+      appData.xNormal
+      , appData.yNormal
+      , appData.zNormal)}
+    , volTexture: { type: "t", value: volTexture }
   };
   const volumetricMaterial = new ShaderMaterial({
     uniforms: uniforms
@@ -93,8 +109,9 @@ export function initCellvis(containerElem
 
       X_SIZE: voxelDimensions[0] + ".0"
       // x, EMISSION_MODEL: ""
-       , MAXIMUM_INTENSITY_MODEL: ""
-      //, ADDITIVE_MODEL: ""
+      //, MAXIMUM_INTENSITY_MODEL: ""
+      , ADDITIVE_MODEL: ""
+      , EMISSION_ABSORTION_MODEL: ""
       , Y_SIZE: voxelDimensions[1] + ".0"
       , Z_SIZE: voxelDimensions[2] + ".0"
       , SLICE_NUM: voxelDimensions[2]
@@ -112,19 +129,24 @@ export function initCellvis(containerElem
 
   function render() {
     renderer.render(scene, camera);
+    let matUniforms = displayBox.material.uniforms;
     let time = Date.now() / 2000;
-    displayBox.material.uniforms.globalTime =
+    // update shader
+    uniforms.globalTime =
       {value: appData.test};
-    displayBox.material.uniforms.ambient =
+    uniforms.ambient =
       {value: Math.log(appData.ambient)};
-    displayBox.material.uniforms.rayV.value =
-      new Vector2(
+    uniforms.rayV.value =
+      new Vector3(
         appData.xNormal
         , appData.yNormal
+        , appData.zNormal
       );
+    uniforms.begSlice.value = appData.begSlice;
+    uniforms.endSlice.value = appData.endSlice;
   }
 
-  registerGui(appData, render);
+  registerGui(appData, voxelDimensions, render);
 
   const controls = registerTrackballControl(
     camera

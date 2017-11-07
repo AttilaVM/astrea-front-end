@@ -2,7 +2,9 @@ uniform float globalTime;
 uniform float sliceDistance;
 uniform sampler2D volTexture;
 uniform float ambient;
-uniform vec2 rayV;
+uniform vec3 rayV;
+uniform int begSlice;
+uniform int endSlice;
 
 varying vec2 vUv;
 varying float time;
