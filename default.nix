@@ -3,6 +3,9 @@ stdenv.mkDerivation rec {
   name = "env";
   shellHook = ''
     npm install
+    cd submodules/dat.gui
+    npm install
+    cd -
 
     echo -e "\e[32m Start Chromium with remote debuging"
     # chromium --remote-debugging-port=9222 https://localhost:8000 &> ./chromium.log &
@@ -19,5 +22,7 @@ stdenv.mkDerivation rec {
     nodejs
     nodePackages.tern
     nodePackages.gulp
+    nodePackages.rollup
+    nodePackages.node-sass
   ];
 }

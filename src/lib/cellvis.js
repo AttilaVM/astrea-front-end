@@ -4,9 +4,11 @@ import { apply
          , multiply
        } from "ramda";
 import Stats from "stats-js";
+// import dat from "../../submodules/dat.gui/index";
 import
 { Scene
   , WebGLRenderer
+  , Vector2
   , Color
   , PerspectiveCamera
   , AxisHelper
@@ -24,9 +26,12 @@ import { scaleInCubeScaler } from "./geometry-utils";
 import { buildParticleSystem } from "./build/particle-system";
 import { buildVoxelBox } from "./build/voxel-box";
 import { registerTrackballControl } from "./control/trackball";
+import { registerGui } from "./gui";
 
 function AppData() {
-  this.color = [255, 255, 255];
+  this.ambient = Math.E;
+  this.xNormal = 0;
+  this.yNormal = 0;
   this.test = 0.5;
 }
 
@@ -37,6 +42,8 @@ export function initCellvis(containerElem
                             , metaData
                             , vertexShader
                             , fragmentShader) {
+  let appData = new AppData();
+
   let canvasWidth = containerElem.offsetWidth;
   let canvasHeight = containerElem.offsetHeight;
   let canvasRatio = canvasWidth / canvasHeight;
@@ -66,8 +73,12 @@ export function initCellvis(containerElem
     voxelSize: {value: 1.0}
     , globalTime: {value: Date.now()}
     , sliceUvRatio: {value: 1.0/voxelDimensions[2]}
+    , sliceDistance: {value: 2 / voxelDimensions[2]}
     , discardThreshold: {value: 0.3}
-    , volTexture: { type: "t", value: ImageUtils.loadTexture( "/img/voxeldata/generated-3.png" ) }
+    , ambient: { value: appData.ambient }
+    , rayV: {type: "2fv", value: new Vector2(appData.xNormal
+                                             , appData.yNormal)}
+    , volTexture: { type: "t", value: ImageUtils.loadTexture( "/img/voxeldata/generated-4.png" ) }
   };
   const volumetricMaterial = new ShaderMaterial({
     uniforms: uniforms
@@ -79,7 +90,11 @@ export function initCellvis(containerElem
     , morphTargets: false
     // define GLSL constants via #define directive
     , defines: {
+
       X_SIZE: voxelDimensions[0] + ".0"
+      // x, EMISSION_MODEL: ""
+       , MAXIMUM_INTENSITY_MODEL: ""
+      //, ADDITIVE_MODEL: ""
       , Y_SIZE: voxelDimensions[1] + ".0"
       , Z_SIZE: voxelDimensions[2] + ".0"
       , SLICE_NUM: voxelDimensions[2]
@@ -98,15 +113,18 @@ export function initCellvis(containerElem
   function render() {
     renderer.render(scene, camera);
     let time = Date.now() / 2000;
-    console.log(time);
     displayBox.material.uniforms.globalTime =
       {value: appData.test};
+    displayBox.material.uniforms.ambient =
+      {value: Math.log(appData.ambient)};
+    displayBox.material.uniforms.rayV.value =
+      new Vector2(
+        appData.xNormal
+        , appData.yNormal
+      );
   }
 
-  let appData = new AppData();
-  let gui = new dat.GUI();
-  gui.addColor(appData, "color").onFinishChange(render);
-  gui.add(appData, "test", 0.0, 10.0).onFinishChange(render);
+  registerGui(appData, render);
 
   const controls = registerTrackballControl(
     camera

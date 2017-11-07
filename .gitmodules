@@ -1,0 +1,3 @@
+[submodule "submodules/dat.gui"]
+	path = submodules/dat.gui
+	url = git@github.com:dataarts/dat.gui.git
