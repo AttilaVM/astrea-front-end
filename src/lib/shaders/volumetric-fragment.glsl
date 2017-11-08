@@ -40,47 +40,50 @@ varying vec3 pos;
     return NOT_ON_CANONIC_VIEW;
   }
 
-  vec2 paralaxisOffset(int sliceStep) {
-    // TODO: it should be handeld as a vec2
-    float zDistance = sliceDistance * float(sliceStep);
-    float xAngle = atan(rayV.x / rayV.z);
-    float yAngle = atan(rayV.y / rayV.z);
-    float xOffset = tan(xAngle) * zDistance;
-    float yOffset = tan(yAngle) * zDistance * sliceUvRatio;
-    return vec2(xOffset, -yOffset);
-  }
-
   float calcColorIntensity(vec4 c) {
+    // TODO: if I keep using this for comparison only, it shouldnt be normalized.
     return (c.r + c.g + c.b) / 3.0 * c.a;
   }
 
-  vec4 rayCast(vec2 planeCoo, mat2 T) {
-    vec2 piercingPoint = 0.5 * (planeCoo + vec2(1.0, 1.0));
+vec4 rayCast(vec2 planeCoo, mat2 T, vec2 paralaxisOffset) {
     vec4 fColor = vec4(0.0, 0.0, 0.0, 0.0);
     vec4 sColor = fColor;
     // TODO: Only calculate dist on implicating models
     float dist = 0.0;
+    // Plane specific variables
+    vec2 piercingPoint = 0.5 * (planeCoo + vec2(1.0, 1.0));
+// return vec4(piercingPoint, 0.0, 1.0);
+
     // NOTE: both the initialization and condition of a glsl loop must depend on constant values, hence the not C idiomatic control flow.
     for (int i = 0; i < SLICE_NUM; i++) {
       if (i < begSlice)
         continue;
-      if (i == endSlice + 1)
+      if (i == endSlice)
         break;
+      float zScaler = float(i + 1);
       dist += length(vec3(rayV.xy, sliceUvRatio));
-      vec2 sliceOffset = vec2(0.0, float(i)/Z_SIZE);
-      vec2 paralaxisOffset = paralaxisOffset(i);
-      //gl_FragColor = vec4(piercingPoint.y * sliceUvRatio + paralaxisOffset.y);
-      if (
-          piercingPoint.y * sliceUvRatio < paralaxisOffset.y
-          || piercingPoint.y * sliceUvRatio - paralaxisOffset.y > sliceUvRatio
-          ||piercingPoint.x + paralaxisOffset.x > 1.0
-          || piercingPoint.x + paralaxisOffset.x < 0.0
-          ) {
-        sColor = vec4(0.0);
+      vec2 sliceOffset = vec2(0.0, float(i) * sliceUvRatio);
 
+      vec2 paralaxisTranslation =
+        sliceOffset + paralaxisOffset * zScaler;
+
+      if (
+      piercingPoint.y * sliceUvRatio + paralaxisTranslation.y < sliceOffset.y - sliceUvRatio
+      || piercingPoint.y * sliceUvRatio + paralaxisTranslation.y > sliceOffset.y + sliceUvRatio
+      // || piercingPoint.y + paralaxisOffset.y / sliceUvRatio <  0.0
+      //|| piercingPoint.y * sliceUvRatio - paralaxisOffset.y > sliceUvRatio
+       || piercingPoint.x + paralaxisTranslation.x
+      > sliceOffset.x + 1.0
+      || piercingPoint.x + paralaxisTranslation.x
+      <  sliceOffset.x
+      // || piercingPoint.x + paralaxisOffset.x * zScaler < zScaler
+          ) {
+        break;
       }
+
       else{
-        vec2 paralaxisTranslation = sliceOffset + paralaxisOffset;
+
+
         sColor =
           texture2D(volTexture
                     , T * vUv
@@ -117,17 +120,28 @@ varying vec3 pos;
     vec4 fColor;
     mat2 T = mat2(1.0, 0.0,
                   0.0, sliceUvRatio);
-    // Detect the planes of the canonical cube.
-    // NOTE: switch statement is not yet supported in every GLSL implementations
+    // Adapt shader to the planes of the canonical cube.
+    // NOTES:
+    // 1. switch statement is not yet supported in every GLSL implementations
+    // 2. Using one viewing cube with one shader is way faster than 6 plane objects with separate shaders.
     int planeType = planeDetect(pos);
     if (planeType == FRONT_PLANE) {
-      fColor = rayCast(pos.xz, T);
+      vec2 paralaxisOffset = vec2(
+           tan(atan(rayV.x / rayV.z))
+        ,  tan(atan(rayV.y / rayV.z)) * sliceUvRatio);
+fColor = rayCast(pos.xz, T, paralaxisOffset);
     }
     else if (planeType == TOP_PLANE) {
-      fColor = rayCast(pos.xy, T);
+      vec2 paralaxisOffset = vec2(
+         tan(atan(rayV.x / rayV.z))
+      ,  tan(atan(rayV.y / rayV.z)) * sliceUvRatio);
+      fColor = rayCast(pos.xy, T, paralaxisOffset);
     }
     else if (planeType == BACK_PLANE) {
-      discard;
+      vec2 paralaxisOffset = vec2(
+          tan(atan(rayV.x / rayV.z))
+        , tan(atan(rayV.y / rayV.z)) * sliceUvRatio);
+      fColor = rayCast(pos.xz, T, paralaxisOffset);
     }
 
     else if (planeType == BOT_PLANE)
