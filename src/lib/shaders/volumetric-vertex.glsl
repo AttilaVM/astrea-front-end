@@ -6,12 +6,12 @@ uniform vec3 rayV;
 uniform int begSlice;
 uniform int endSlice;
 
-varying vec2 vUv;
+varying vec3 vUv;
 varying float time;
 varying vec3 pos;
 
 void main() {
-  vUv = uv;
+  vUv = vec3(uv, 1.0);
   time = globalTime;
   pos = position;
   gl_Position =
