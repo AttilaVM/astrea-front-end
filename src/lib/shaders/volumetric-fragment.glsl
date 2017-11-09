@@ -87,18 +87,18 @@ vec4 rayCast(vec2 planeCoo, mat3 translation, mat3 scale) {
              xOffset, yOffset, 1.0
              );
       // return vec4(vUv.xy, 0.0, 1.0);
-      vec3 tUv =  vUv;
-      // if (any(lessThan(tUv, vec3(0.0, zOffset, 1.0)))
-      //     || any(greaterThan(tUv, vec3(1.0, zOffset + 1.0, 1.0))))
-      //   break;
-      tUv -= vec3(0.5, 0.5 * sliceUvRatio, 1.0);
+      vec3 tUv = translation * vUv;
+      if (any(lessThan(tUv, vec3(0.0, zOffset, 1.0)))
+          || any(greaterThan(tUv, vec3(1.0, zOffset + 1.0, 1.0))))
+      break;
+      //tUv -= vec3(0.5, 0.5 * sliceUvRatio, 1.0);
       // tUv = rotate(tUv, pitch, debug1 * PI);
       //tUv.x *= debug10 ;
 
       if(yaw != 0.0)
         tUv.x *= 1.0 + rayV.x / rayV.z;
-      tUv += vec3(0.5, 0.5 * sliceUvRatio, 1.0);
-      //tUv = scale * tUv;
+      //tUv += vec3(0.5, 0.5 * sliceUvRatio, 1.0);
+      tUv = scale * tUv;
       vec2 pUv = tUv.xy;
       sColor = texture2D(volTexture, pUv);
 
