@@ -13,6 +13,10 @@ uniform float ambient;
 uniform vec3 rayV;
 uniform int begSlice;
 uniform int endSlice;
+// Debug
+uniform float debug1;
+uniform float debug10;
+uniform float debug200;
 
 varying vec3 vUv;
 varying float time;
@@ -45,6 +49,16 @@ varying vec3 pos;
     return (c.r + c.g + c.b) / 3.0 * c.a;
   }
 
+vec3 rotate(vec3 v, float p, float y) {
+  return mat3(1.0,  0.0,    0.0,
+              0.0,  cos(p), sin(p),
+              0.0, -sin(p), cos(p))
+    * mat3(cos(y), 0.0, -sin(y),
+           0.0,    1.0,  0.0,
+           sin(y), 0.0,  cos(y))
+    * v;
+}
+
 vec4 rayCast(vec2 planeCoo, mat3 translation, mat3 scale) {
     vec4 fColor = vec4(0.0, 0.0, 0.0, 0.0);
     vec4 sColor = fColor;
@@ -63,20 +77,28 @@ vec4 rayCast(vec2 planeCoo, mat3 translation, mat3 scale) {
       float zScaler = zOffset + 1.0;
       dist += length(vec3(rayV.xy, sliceUvRatio));
       // Slice offset
-      float xOffset = tan(atan(rayV.x / rayV.z)) * float(i);
-      float yOffset = zOffset + tan(atan(rayV.y / rayV.z)) * float(i);
-      // Slice offset
+      float yaw = atan(rayV.x / rayV.z);
+      float pitch = atan(rayV.y / rayV.z);
+      float xOffset = tan(yaw) * float(i);
+      float yOffset = zOffset + tan(pitch) * float(i);
       translation =
         mat3(1.0, 0.0, 0.0,
              0.0, 1.0, 0.0,
              xOffset, yOffset, 1.0
              );
       // return vec4(vUv.xy, 0.0, 1.0);
-      vec3 tUv = translation * vUv;
-      if (any(lessThan(tUv, vec3(0.0, zOffset, 1.0)))
-          || any(greaterThan(tUv, vec3(1.0, zOffset + 1.0, 1.0))))
-        break;
-      tUv = scale * tUv;
+      vec3 tUv =  vUv;
+      // if (any(lessThan(tUv, vec3(0.0, zOffset, 1.0)))
+      //     || any(greaterThan(tUv, vec3(1.0, zOffset + 1.0, 1.0))))
+      //   break;
+      tUv -= vec3(0.5, 0.5 * sliceUvRatio, 1.0);
+      // tUv = rotate(tUv, pitch, debug1 * PI);
+      //tUv.x *= debug10 ;
+
+      if(yaw != 0.0)
+        tUv.x *= 1.0 + rayV.x / rayV.z;
+      tUv += vec3(0.5, 0.5 * sliceUvRatio, 1.0);
+      //tUv = scale * tUv;
       vec2 pUv = tUv.xy;
       sColor = texture2D(volTexture, pUv);
 

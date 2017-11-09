@@ -5,6 +5,10 @@ uniform float ambient;
 uniform vec3 rayV;
 uniform int begSlice;
 uniform int endSlice;
+//debug
+uniform float debug1;
+uniform float debug10;
+uniform float debug200;
 
 varying vec3 vUv;
 varying float time;

@@ -44,6 +44,9 @@ export function initCellvis(containerElem
     this.yNormal = 0;
     this.zNormal = 1;
     this.test = 0.5;
+    this.debug1 = 1;
+    this.debug10 = 10;
+    this.debug200 = 200;
     // Production state
     this.ambient = Math.E;
     this.begSlice = 0;
@@ -84,6 +87,9 @@ export function initCellvis(containerElem
   const uniforms = {
     voxelSize: {value: 1.0}
     , globalTime: {value: Date.now()}
+    , debug1: {value: appData.debug1}
+    , debug10: {value: appData.debug10}
+    , debug200: {value: appData.debug200}
     , begSlice: {type: "i", value: 1}
     , endSlice: {type: "i", value: voxelDimensions[2] + 1}
     , sliceUvRatio: {value: 1.0/voxelDimensions[2]}
@@ -112,6 +118,7 @@ export function initCellvis(containerElem
       //, MAXIMUM_INTENSITY_MODEL: ""
       , ADDITIVE_MODEL: ""
       , EMISSION_ABSORTION_MODEL: ""
+      , PI: 3.1415926535897932384626433832795
       , Y_SIZE: voxelDimensions[1] + ".0"
       , Z_SIZE: voxelDimensions[2] + ".0"
       , SLICE_NUM: voxelDimensions[2]
@@ -134,6 +141,9 @@ export function initCellvis(containerElem
     // update shader
     uniforms.globalTime =
       {value: appData.test};
+    uniforms.debug1.value = appData.debug1;
+    uniforms.debug10.value = appData.debug10;
+    uniforms.debug200.value = appData.debug200;
     uniforms.ambient =
       {value: Math.log(appData.ambient)};
     uniforms.rayV.value =

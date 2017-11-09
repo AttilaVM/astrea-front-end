@@ -22,6 +22,10 @@ export function registerGui(appData, voxelDimensions, render) {
       ,["yNormal", -1, 1, 0.001]
       ,["zNormal", 0, 1, 0.01]
       ,["test", 0.0, 10.0]
+      ,["debug1", -1.0, 1.0, 0.001]
+      ,["debug10", -10.0, 10.0, 0.1]
+      ,["debug200", -200.0, 200.0, 1]
+      ,["test", 0.0, 10.0]
       ,["ambient", 1.0, 200.0]
       ,["begSlice", 0, voxelDimensions[2], 1]
       ,["endSlice", 1, voxelDimensions[2], 1]]);
