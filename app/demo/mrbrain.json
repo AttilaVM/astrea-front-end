@@ -1,0 +1,8 @@
+{
+  "id": "generated-4",
+  "thumbSrc": "img/thumb/mrbrain.png",
+  "voxelSrc": "img/voxeldata/mrbrain.png",
+  "scale": [42, 64, 29],
+  "zScaler": 1,
+  "metaData": {}
+}

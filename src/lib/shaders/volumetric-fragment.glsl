@@ -75,10 +75,7 @@ vec4 rayCast(vec2 planeCoo, mat3 scale, vec3 stepV, vec3 offsetV, vec3 dirV) {
       if (i == endSlice)
         break;
 
-
-
       float s = float(i);
-
       dist += length(vec3(rayV.xy, sliceUvRatio));
       // Slice offset
       float yaw = atan(rayV.x / rayV.z);
@@ -97,8 +94,8 @@ vec4 rayCast(vec2 planeCoo, mat3 scale, vec3 stepV, vec3 offsetV, vec3 dirV) {
         + stepV.y * s * dirV.z
         // front-back
         + (piercingPoint.y * float(SLICE_NUM)
-           + s * stepV.y
-           + s * sliceUvRatio
+           + s * stepV.y * float(SLICE_NUM)
+           //+ s * sliceUvRatio
            ) * dirV.y
         ;
       // return vec4(xOffset);
@@ -123,6 +120,10 @@ vec4 rayCast(vec2 planeCoo, mat3 scale, vec3 stepV, vec3 offsetV, vec3 dirV) {
       //tUv += vec3(0.5, 0.5 * sliceUvRatio, 1.0);
       tUv = scale * tUv;
       vec2 pUv = tUv.xy;
+
+      if (dirV.z == 1.0)
+        pUv.x += 1.0;
+
       sColor = texture2D(volTexture, pUv);
 
 #if defined( MAXIMUM_INTENSITY_MODEL )
@@ -152,6 +153,7 @@ vec4 rayCast(vec2 planeCoo, mat3 scale, vec3 stepV, vec3 offsetV, vec3 dirV) {
   }
 
   void main() {
+
     vec4 fColor;
     mat3 scale = mat3(1.0, 0.0,          0.0,
                       0.0, sliceUvRatio, 0.0,
@@ -165,8 +167,8 @@ vec4 rayCast(vec2 planeCoo, mat3 scale, vec3 stepV, vec3 offsetV, vec3 dirV) {
 
       vec3 dirV = vec3(0.0, 1.0, 0.0);
       vec3 offsetV = vec3(0.0, 0.0, 0.0);
-      vec3 stepV = vec3(rayV.x / rayV.y
-                        , rayV.z / rayV.y
+      vec3 stepV = vec3(sin(rayV.x / (rayV.y  / sliceUvRatio))
+                        , sin(rayV.z / (rayV.y / sliceUvRatio ))
                         , 1.0);
       fColor = rayCast(pos.xz
                        , scale
@@ -177,8 +179,8 @@ vec4 rayCast(vec2 planeCoo, mat3 scale, vec3 stepV, vec3 offsetV, vec3 dirV) {
     else if (planeType == TOP_PLANE) {
       vec3 dirV = vec3(0.0, 0.0, -1.0);
       vec3 offsetV = vec3(0.0, 0.0, SLICE_NUM - 1);
-      vec3 stepV = vec3(rayV.x / rayV.z
-                        , rayV.y / rayV.z
+      vec3 stepV = vec3(sin(rayV.x / (rayV.z / sliceUvRatio))
+                        , sin(rayV.y / (rayV.z / sliceUvRatio))
                         , 1.0);
       fColor = rayCast(pos.xz
                        , scale
@@ -191,10 +193,13 @@ vec4 rayCast(vec2 planeCoo, mat3 scale, vec3 stepV, vec3 offsetV, vec3 dirV) {
     }
 
     else if (planeType == BOT_PLANE) {
+      mat3 scale = mat3(-1, 0.0,          0.0,
+                      0.0, sliceUvRatio, 0.0,
+                      0.0, 0.0,          1.0);
       vec3 dirV = vec3(0.0, 0.0, 1.0);
       vec3 offsetV = vec3(0.0, 0.0, 0.0);
-      vec3 stepV = vec3(-rayV.x / rayV.z
-                        , -rayV.y / rayV.z
+      vec3 stepV = vec3(sin(rayV.x / (rayV.z / sliceUvRatio))
+                        , sin(rayV.y / (rayV.z / sliceUvRatio) )
                         , 1.0);
       fColor = rayCast(pos.xz
                        , scale

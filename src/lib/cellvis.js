@@ -82,7 +82,7 @@ export function initCellvis(containerElem
   // camera.rotation.y += Math.PI;
 
   const viewBoxGeo = new BoxBufferGeometry(2, 2, 2);
-  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/generated-4.png");
+  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/mock-img-stack.png");
   volTexture.minFilter = NearestFilter;
   const uniforms = {
     voxelSize: {value: 1.0}
