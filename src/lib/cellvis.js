@@ -28,7 +28,7 @@ import { buildParticleSystem } from "./build/particle-system";
 import { buildVoxelBox } from "./build/voxel-box";
 import { registerTrackballControl } from "./control/trackball";
 import { registerGui } from "./gui";
-
+import { subtract } from "./math/vec3";
 
 
 export function initCellvis(containerElem
@@ -135,6 +135,9 @@ export function initCellvis(containerElem
   scene.add(camera);
 
   function render() {
+    console.log(
+      camera.position
+      , Math.atan(camera.position.x / camera.position.z));
     renderer.render(scene, camera);
     let matUniforms = displayBox.material.uniforms;
     let time = Date.now() / 2000;
@@ -146,12 +149,12 @@ export function initCellvis(containerElem
     uniforms.debug200.value = appData.debug200;
     uniforms.ambient =
       {value: Math.log(appData.ambient)};
-    uniforms.rayV.value =
-      new Vector3(
-        appData.xNormal
-        , appData.yNormal
-        , appData.zNormal
-      );
+    uniforms.rayV.value = camera.position;
+      // new Vector3(
+      //   appData.xNormal
+      //   , appData.yNormal
+      //   , appData.zNormal
+      // );
     uniforms.begSlice.value = appData.begSlice;
     uniforms.endSlice.value = appData.endSlice;
   }

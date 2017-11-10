@@ -65,6 +65,7 @@ vec4 rayCast(vec2 planeCoo, mat3 translation, mat3 scale) {
     // TODO: Only calculate dist on implicating models
     float dist = 0.0;
     // Plane specific variables
+    float zStart = float(SLICE_NUM);
     vec2 piercingPoint = 0.5 * (planeCoo + vec2(1.0, 1.0));
 
     // NOTE: both the initialization and condition of a GLSL loop must depend on constant values, hence the not C idiomatic control flow.
@@ -73,30 +74,33 @@ vec4 rayCast(vec2 planeCoo, mat3 translation, mat3 scale) {
         continue;
       if (i == endSlice)
         break;
-      float zOffset = float(i);
-      float zScaler = zOffset + 1.0;
+      float zStep = -float(i);
+      float zOffset = float(SLICE_NUM - 1);
       dist += length(vec3(rayV.xy, sliceUvRatio));
       // Slice offset
       float yaw = atan(rayV.x / rayV.z);
       float pitch = atan(rayV.y / rayV.z);
-      float xOffset = tan(yaw) * float(i);
-      float yOffset = zOffset + tan(pitch) * float(i);
+      float xStep = rayV.x / rayV.z * zStep;
+      float yStep =
+        zOffset + zStep
+        + rayV.y / rayV.z * zStep;
+      // return vec4(xOffset);
       translation =
         mat3(1.0, 0.0, 0.0,
              0.0, 1.0, 0.0,
-             xOffset, yOffset, 1.0
+             xStep, yStep, 1.0
              );
       // return vec4(vUv.xy, 0.0, 1.0);
       vec3 tUv = translation * vUv;
-      if (any(lessThan(tUv, vec3(0.0, zOffset, 1.0)))
-          || any(greaterThan(tUv, vec3(1.0, zOffset + 1.0, 1.0))))
-      break;
+      // if (any(lessThan(tUv, vec3(0.0, zOffset, 1.0)))
+      //     || any(greaterThan(tUv, vec3(1.0, zOffset + 1.0, 1.0))))
+      //  break;
       //tUv -= vec3(0.5, 0.5 * sliceUvRatio, 1.0);
       // tUv = rotate(tUv, pitch, debug1 * PI);
       //tUv.x *= debug10 ;
 
-      if(yaw != 0.0)
-        tUv.x *= 1.0 + rayV.x / rayV.z;
+      // if(yaw != 0.0)
+      //   tUv.x *= 1.0 + rayV.x / rayV.z;
       //tUv += vec3(0.5, 0.5 * sliceUvRatio, 1.0);
       tUv = scale * tUv;
       vec2 pUv = tUv.xy;
@@ -151,11 +155,16 @@ vec4 rayCast(vec2 planeCoo, mat3 translation, mat3 scale) {
                        , scale);
     }
     else if (planeType == TOP_PLANE) {
-      discard;
-      // vec2 paralaxisOffset = vec2(
-      //    tan(atan(rayV.x / rayV.z))
-      // ,  tan(atan(rayV.y / rayV.z)) * sliceUvRatio);
-      // fColor = rayCast(pos.xy, T, paralaxisOffset);
+     mat3 translation =
+        mat3(1.0, 0.0, 0.0,
+             0.0, 1.0, 0.0,
+             tan(atan(rayV.x / rayV.z))
+             , tan(atan(rayV.y / rayV.z)), 1.0);
+      // fColor =  vec4(tan(atan(rayV.x / rayV.z))
+      //, tan(atan(rayV.y / rayV.z)), 0.0, 1.0);
+      fColor = rayCast(pos.xz
+                       , translation
+                       , scale);
     }
     else if (planeType == BACK_PLANE) {
       discard;
