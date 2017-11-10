@@ -59,7 +59,7 @@ vec3 rotate(vec3 v, float p, float y) {
     * v;
 }
 
-vec4 rayCast(vec2 planeCoo, mat3 translation, mat3 scale) {
+vec4 rayCast(vec2 planeCoo, mat3 scale, vec3 stepV, vec3 offsetV, vec3 dirV) {
     vec4 fColor = vec4(0.0, 0.0, 0.0, 0.0);
     vec4 sColor = fColor;
     // TODO: Only calculate dist on implicating models
@@ -67,31 +67,50 @@ vec4 rayCast(vec2 planeCoo, mat3 translation, mat3 scale) {
     // Plane specific variables
     float zStart = float(SLICE_NUM);
     vec2 piercingPoint = 0.5 * (planeCoo + vec2(1.0, 1.0));
-
     // NOTE: both the initialization and condition of a GLSL loop must depend on constant values, hence the not C idiomatic control flow.
     for (int i = 0; i < SLICE_NUM; i++) {
+
       if (i < begSlice)
         continue;
       if (i == endSlice)
         break;
-      float zStep = -float(i);
-      float zOffset = float(SLICE_NUM - 1);
+
+
+
+      float s = float(i);
+
       dist += length(vec3(rayV.xy, sliceUvRatio));
       // Slice offset
       float yaw = atan(rayV.x / rayV.z);
       float pitch = atan(rayV.y / rayV.z);
-      float xStep = rayV.x / rayV.z * zStep;
-      float yStep =
-        zOffset + zStep
-        + rayV.y / rayV.z * zStep;
+      float xPos =
+        offsetV.x
+        // top-bot
+        + stepV.x * s * dirV.z
+        // front-back
+        + stepV.x * s * dirV.y
+
+        ;
+      float yPos =
+        offsetV.z + dirV.z * s
+        // top-bot
+        + stepV.y * s * dirV.z
+        // front-back
+        + (piercingPoint.y * float(SLICE_NUM)
+           + s * stepV.y
+           + s * sliceUvRatio
+           ) * dirV.y
+        ;
       // return vec4(xOffset);
-      translation =
+      mat3 translation =
         mat3(1.0, 0.0, 0.0,
              0.0, 1.0, 0.0,
-             xStep, yStep, 1.0
+             xPos, yPos, 1.0
              );
       // return vec4(vUv.xy, 0.0, 1.0);
       vec3 tUv = translation * vUv;
+
+
       // if (any(lessThan(tUv, vec3(0.0, zOffset, 1.0)))
       //     || any(greaterThan(tUv, vec3(1.0, zOffset + 1.0, 1.0))))
       //  break;
@@ -143,61 +162,53 @@ vec4 rayCast(vec2 planeCoo, mat3 translation, mat3 scale) {
     // 2. Using one viewing cube with one shader is way faster than 6 plane objects with separate shaders.
     int planeType = planeDetect(pos);
     if (planeType == FRONT_PLANE) {
-      mat3 translation =
-        mat3(1.0, 0.0, 0.0,
-             0.0, 1.0, 0.0,
-             tan(atan(rayV.x / rayV.z))
-             , tan(atan(rayV.y / rayV.z)), 1.0);
-      // fColor =  vec4(tan(atan(rayV.x / rayV.z))
-      //, tan(atan(rayV.y / rayV.z)), 0.0, 1.0);
+
+      vec3 dirV = vec3(0.0, 1.0, 0.0);
+      vec3 offsetV = vec3(0.0, 0.0, 0.0);
+      vec3 stepV = vec3(rayV.x / rayV.y
+                        , rayV.z / rayV.y
+                        , 1.0);
       fColor = rayCast(pos.xz
-                       , translation
-                       , scale);
+                       , scale
+                       , stepV
+                       , offsetV
+                       , dirV);
     }
     else if (planeType == TOP_PLANE) {
-     mat3 translation =
-        mat3(1.0, 0.0, 0.0,
-             0.0, 1.0, 0.0,
-             tan(atan(rayV.x / rayV.z))
-             , tan(atan(rayV.y / rayV.z)), 1.0);
-      // fColor =  vec4(tan(atan(rayV.x / rayV.z))
-      //, tan(atan(rayV.y / rayV.z)), 0.0, 1.0);
+      vec3 dirV = vec3(0.0, 0.0, -1.0);
+      vec3 offsetV = vec3(0.0, 0.0, SLICE_NUM - 1);
+      vec3 stepV = vec3(rayV.x / rayV.z
+                        , rayV.y / rayV.z
+                        , 1.0);
       fColor = rayCast(pos.xz
-                       , translation
-                       , scale);
+                       , scale
+                       , stepV
+                       , offsetV
+                       , dirV);
     }
     else if (planeType == BACK_PLANE) {
       discard;
-      // vec2 paralaxisOffset = vec2(
-      //     tan(atan(rayV.x / rayV.z))
-      //   , tan(atan(rayV.y / rayV.z)) * sliceUvRatio);
-      // fColor = rayCast(pos.xz, T, paralaxisOffset);
     }
 
-    else if (planeType == BOT_PLANE)
-      discard;
+    else if (planeType == BOT_PLANE) {
+      vec3 dirV = vec3(0.0, 0.0, 1.0);
+      vec3 offsetV = vec3(0.0, 0.0, 0.0);
+      vec3 stepV = vec3(-rayV.x / rayV.z
+                        , -rayV.y / rayV.z
+                        , 1.0);
+      fColor = rayCast(pos.xz
+                       , scale
+                       , stepV
+                       , offsetV
+                       , dirV);
+    }
     else if (planeType == LEFT_PLANE)
       discard;
     else if (planeType == RIGHT_PLANE)
       discard;
     else
       discard;
-    // gl_FragColor = vec4(piercingPoint
-    //                     , 0.0
-    //                     , 0.0);
+
 
     gl_FragColor = fColor;
-
-    //gl_FragColor = vec4(piercingPoint.y);
-    // gl_FragColor = vec4(pos.x
-    //                     , pos.y
-    //                     , pos.z
-    //                     , 1.0
-    //                     );
-    // gl_FragColor = vec4(rayV, 1.0);
-    // gl_FragColor = vec4(0.0
-    //                     , 0.0
-    //                     , (sin(time) + 1.0) / 2.0
-    //                     // , time / 10000000000000.0
-    //                     , 0.0);
   }
