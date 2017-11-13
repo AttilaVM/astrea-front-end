@@ -43,7 +43,6 @@ export function initCellvis(containerElem
     this.xNormal = 0;
     this.yNormal = 0;
     this.zNormal = 1;
-    this.test = 0.5;
     this.debug1 = 1;
     this.debug10 = 10;
     this.debug200 = 200;
@@ -82,11 +81,10 @@ export function initCellvis(containerElem
   // camera.rotation.y += Math.PI;
 
   const viewBoxGeo = new BoxBufferGeometry(2, 2, 2);
-  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/mock-img-stack.png");
+  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/generated-4.png");
   volTexture.minFilter = NearestFilter;
   const uniforms = {
     voxelSize: {value: 1.0}
-    , globalTime: {value: Date.now()}
     , debug1: {value: appData.debug1}
     , debug10: {value: appData.debug10}
     , debug200: {value: appData.debug200}
@@ -140,10 +138,7 @@ export function initCellvis(containerElem
       , Math.atan(camera.position.x / camera.position.z));
     renderer.render(scene, camera);
     let matUniforms = displayBox.material.uniforms;
-    let time = Date.now() / 2000;
     // update shader
-    uniforms.globalTime =
-      {value: appData.test};
     uniforms.debug1.value = appData.debug1;
     uniforms.debug10.value = appData.debug10;
     uniforms.debug200.value = appData.debug200;
