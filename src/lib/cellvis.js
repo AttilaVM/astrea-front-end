@@ -11,6 +11,7 @@ import
   , Vector3
   , Color
   , PerspectiveCamera
+  , OrthographicCamera
   , AxisHelper
   , BoxBufferGeometry
   , VertexColors
@@ -73,6 +74,14 @@ export function initCellvis(containerElem
   const axes = new AxisHelper(20);
   const camera =
     new PerspectiveCamera( 75, canvasRatio , 0.1, 3000);
+  // const camera = new OrthographicCamera(
+  //   - canvasWidth / 2
+  //   , canvasWidth / 2
+  //   , canvasHeight / 2
+  //   , - canvasHeight / 2
+  //   , 1
+  //   , 1000
+  // );
   camera.name = "p-camera";
   camera.position.x = 0;
   camera.position.y = 0;
@@ -81,7 +90,7 @@ export function initCellvis(containerElem
   // camera.rotation.y += Math.PI;
 
   const viewBoxGeo = new BoxBufferGeometry(2, 2, 2);
-  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/generated-4.png");
+  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/mock-img-stack.png");
   volTexture.minFilter = NearestFilter;
   const uniforms = {
     voxelSize: {value: 1.0}
