@@ -83,14 +83,27 @@ vec3 rotate(vec3 v, float p, float y) {
 }
 
 vec4 rayCast(vec3 planeCoo, mat3 scale, vec3 stepV, vec3 offsetV) {
-  //return vec4(offsetV.z);
+    const int raySteps = SLICE_NUM;
+    //const int raySteps = 256;
+    //return vec4(offsetV.y + debug1);
   //return vec4(stepV.x * debug200, stepV.z * debug200, 0.0, 1.0);
     vec4 fColor = vec4(0.0, 0.0, 0.0, 0.0);
     vec4 sColor = fColor;
     vec3 piercingPoint = 0.5 * (planeCoo + vec3(1.0, 1.0, 1.0));
     // Plane specific variables
     // NOTE: both the initialization and condition of a GLSL loop must depend on constant values, hence the not C idiomatic control flow.
-    for (int i = 0; i < SLICE_NUM; i++) {
+    vec3 topBound;
+    vec3 botBound;
+    if (planeCoo == pos.xyz) {
+      topBound = vec3(1.0, 1.0, 1.0);
+      botBound = vec3(0.0, 0.0, 0.0);
+    }
+    else if (planeCoo == pos.xzy) {
+      topBound = vec3(1.0,  1.0, 1.0);
+      botBound = vec3(0.0, -1.0, 0.0);
+    }
+
+    for (int i = 0; i < raySteps; i++) {
       if (i < begSlice)
         continue;
       if (i == endSlice)
@@ -98,22 +111,22 @@ vec4 rayCast(vec3 planeCoo, mat3 scale, vec3 stepV, vec3 offsetV) {
 
       float s = float(i);
       vec3 s_ray = s * stepV;
-      s_ray.z = stepper(s_ray.z, SLICE_NUM) * float(SLICE_NUM);
-
+      s_ray.z = fround(s_ray.z * float(SLICE_NUM));
 
       vec3 posV = offsetV + s_ray;
+      // if (i == int(debug200))
+      //   return vec4(posV.y * debug1);
 
+      if (
+          posV.z > float(SLICE_NUM)
+          || posV.z < 0.0
+          || piercingPoint.y - offsetV.y + posV.y  > topBound.y
+          || piercingPoint.y - offsetV.y + posV.y  < botBound.y
+          || piercingPoint.x - offsetV.x + posV.x  > topBound.x
+          || piercingPoint.x - offsetV.x + posV.x  < botBound.x
+          )
+        break;
 
-
-      //return vec4(stepV.z);
-      // if (
-      //     abs(stepV.z) == 1.0 && piercingPoint.y + posV.y > 1.0
-      //     || stepV.y == -1.0 / float(SLICE_NUM) && piercingPoint.y * 40.0 + posV.z > 40.0
-      //     || abs(stepV.z) == 1.0 && piercingPoint.y + posV.y < 0.0
-      //     || stepV.z == 1.0 &&  (piercingPoint.x - posV.x > 1.0 || piercingPoint.x - posV.x < 0.0)
-      //     )
-      //   break;
-        //return vec4(posV.xy, 0.0, 1.0);
       mat3 translation =
         mat3(1.0, 0.0, 0.0,
              0.0, 1.0, 0.0,
@@ -178,7 +191,7 @@ vec4 rayCast(vec3 planeCoo, mat3 scale, vec3 stepV, vec3 offsetV) {
                         , -1.0 / float(SLICE_NUM)
                         //, debug200
                         //, -stepper(debug1, SLICE_NUM) * float(SLICE_NUM)
-                        , - sin(rayV.z / (rayV.y / sliceUvRatio))
+                        , -sin(rayV.z / (rayV.y / sliceUvRatio))
                         //, -sin(rayV.z / (rayV.y / 1.0))
                         );
       fColor = rayCast(pos.xzy

@@ -59,7 +59,7 @@ export function initCellvis(containerElem
   let canvasRatio = canvasWidth / canvasHeight;
   // Basic scene setup
   const scene = new Scene();
-  scene.background = new Color(0x232323);
+  scene.background = new Color(0x292929);
   const renderer = new WebGLRenderer();
   renderer.setSize(canvasWidth, canvasHeight);
   /// Adapt to displays with different pixel densities
