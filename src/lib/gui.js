@@ -25,9 +25,12 @@ export function registerGui(appData, voxelDimensions, render) {
       ,["debug10", -10.0, 10.0, 0.1]
       ,["debug200", -200.0, 200.0, 1]
       ,["ambient", 1.0, 200.0]
+      ,["zInterpolation"]
       ,["begSlice", 0, voxelDimensions[2], 1]
       ,["endSlice", 1, voxelDimensions[2], 1]]);
   }
+
+
   else {
     console.warn("Please include dat.gui into your webpage: https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.5/dat.gui.min.js");
   }

@@ -49,6 +49,7 @@ export function initCellvis(containerElem
     this.debug200 = 200;
     // Production state
     this.ambient = Math.E;
+    this.zInterpolation = true;
     this.begSlice = 0;
     this.endSlice = voxelDimensions[2];
   }
@@ -103,6 +104,7 @@ export function initCellvis(containerElem
     , sliceDistance: {value: 2 / voxelDimensions[2]}
     , discardThreshold: {value: 0.3}
     , ambient: { value: appData.ambient }
+    , zInterpolation: { type: "b", value: appData.zInterpolation }
     , rayV: {type: "3fv", value: new Vector3(
       appData.xNormal
       , appData.yNormal
@@ -153,6 +155,7 @@ export function initCellvis(containerElem
     uniforms.debug200.value = appData.debug200;
     uniforms.ambient =
       {value: Math.log(appData.ambient)};
+    uniforms.zInterpolation.value = appData.zInterpolation;
     uniforms.rayV.value = camera.position;
       // new Vector3(
       //   appData.xNormal
