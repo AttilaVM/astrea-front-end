@@ -91,7 +91,7 @@ export function initCellvis(containerElem
   // camera.rotation.y += Math.PI;
 
   const viewBoxGeo = new BoxBufferGeometry(2, 2, 2);
-  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/mock-img-stack.png");
+  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/generated-4.png");
   volTexture.minFilter = NearestFilter;
   const uniforms = {
     voxelSize: {value: 1.0}
@@ -105,10 +105,18 @@ export function initCellvis(containerElem
     , discardThreshold: {value: 0.3}
     , ambient: { value: appData.ambient }
     , zInterpolation: { type: "b", value: appData.zInterpolation }
-    , rayV: {type: "3fv", value: new Vector3(
-      appData.xNormal
-      , appData.yNormal
-      , appData.zNormal)}
+    , rayV: {type: "3fv", value: camera.position}
+    , rayVn: {type: "3fv", value:
+              new Vector3()
+              .copy(camera.position)
+              .normalize()
+              .negate()
+             }
+    , v: {type: "3fv", value: new Vector3(
+      voxelDimensions[0]
+      , voxelDimensions[1]
+      , voxelDimensions[2]
+    )}
     , volTexture: { type: "t", value: volTexture }
   };
   const volumetricMaterial = new ShaderMaterial({
@@ -130,6 +138,7 @@ export function initCellvis(containerElem
       , PI: 3.1415926535897932384626433832795
       , Y_SIZE: voxelDimensions[1] + ".0"
       , Z_SIZE: voxelDimensions[2] + ".0"
+      , V_MAX: apply(Math.max, voxelDimensions)
       , SLICE_NUM: voxelDimensions[2]
       , SLICE_UV_RATIO: 1 / voxelDimensions[2] + ".0"
       , DATA_LENGTH: voxelData.length
@@ -157,11 +166,11 @@ export function initCellvis(containerElem
       {value: Math.log(appData.ambient)};
     uniforms.zInterpolation.value = appData.zInterpolation;
     uniforms.rayV.value = camera.position;
-      // new Vector3(
-      //   appData.xNormal
-      //   , appData.yNormal
-      //   , appData.zNormal
-      // );
+    uniforms.rayVn.value =
+      new Vector3()
+      .copy(camera.position)
+      .normalize()
+      .negate();
     uniforms.begSlice.value = appData.begSlice;
     uniforms.endSlice.value = appData.endSlice;
   }

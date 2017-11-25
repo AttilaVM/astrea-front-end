@@ -7,11 +7,13 @@
 #define NOT_ON_CANONIC_VIEW -1
 
 uniform float sliceUvRatio;
+uniform vec3 v;
 uniform sampler2D volTexture;
 uniform float sliceDistance;
 uniform float ambient;
 uniform bool zInterpolation;
 uniform vec3 rayV;
+uniform vec3 rayVn;
 uniform int begSlice;
 uniform int endSlice;
 // Debug
@@ -21,28 +23,7 @@ uniform float debug200;
 
 varying vec3 vUv;
 varying vec3 pos;
-
-  int planeDetect(vec3 pos) {
-    if (pos.y == 1.0) {
-      return FRONT_PLANE;
-    }
-    else if (pos.z == 1.0) {
-      return TOP_PLANE;
-    }
-    else if (pos.y == -1.0) {
-      return BACK_PLANE;
-    }
-    else if (pos.z == -1.0) {
-      return BOT_PLANE;
-    }
-    else if (pos.x == -1.0) {
-      return LEFT_PLANE;
-    }
-    else if (pos.x == 1.0) {
-      return RIGHT_PLANE;
-    }
-    return NOT_ON_CANONIC_VIEW;
-  }
+varying mat3 scale;
 
   float calcColorIntensity(vec4 c) {
     // NOTE OPTIMALIZATION: if I keep using this for comparison only, it shouldn't be normalized.
@@ -84,7 +65,7 @@ vec4 sampler(vec3 uv, mat3 translation, mat3 scale, bool flipOnX, bool flipOnY) 
   return texture2D(volTexture, pUv);
 }
 
-vec4 rayCast(vec3 planeCoo, mat3 scale, vec3 stepV, bvec2 flip, vec3 offsetV) {
+vec4 rayCastOld(vec3 planeCoo, mat3 scale, vec3 stepV, bvec2 flip, vec3 offsetV) {
     const int raySteps = SLICE_NUM;
     //const int raySteps = 256;
     //return vec4(offsetV.x * debug1);
@@ -207,122 +188,143 @@ vec4 rayCast(vec3 planeCoo, mat3 scale, vec3 stepV, bvec2 flip, vec3 offsetV) {
     return fColor;
   }
 
-  void main() {
+vec4 rayCast(vec3 P_r, mat3 scale, int samplingRate) {
+  vec3 uv;
+  vec4 fColor = vec4(0.0);
+  for (int i = 0; i < V_MAX; i++) {
+    if (i == samplingRate || i == endSlice)
+      break;
+    float s_r = float(i);
+    P_r = P_r + s_r * (rayVn / v);
+    uv = scale * vec3(P_r.x
+                      , P_r.y
+                      + fround(P_r.z * (v.z - 1.0))
+                      , 1.0);
+    fColor += texture2D(volTexture, uv.xy) / float(samplingRate) * ambient;
+  }
+  return fColor;
+}
 
-    vec4 fColor;
-    mat3 scale = mat3(1.0, 0.0,          0.0,
-                      0.0, sliceUvRatio, 0.0,
-                      0.0, 0.0,          1.0);
+  void main() {
+    vec3 P_r = 0.5 * (pos + vec3(1.0, 1.0, 1.0));
+    // It could be more precise
+    int samplingRate =
+      int((  abs(dot(vec3(1.0, 0.0, 0.0), rayV)) * v.x
+           + abs(dot(vec3(0.0, 1.0, 0.0), rayV)) * v.y
+           + abs(dot(vec3(0.0, 0.0, 1.0), rayV)) * v.z
+              ) / 3.0);
+    vec4 fColor = rayCast(P_r, scale, samplingRate);
+
     // Adapt shader to the planes of the canonical cube.
     // NOTES:
     // 1. switch statement is not yet supported in every GLSL implementations
     // 2. Using one viewing cube with one shader is way faster than 6 plane objects with separate shaders.
-    int planeType = planeDetect(pos);
-    if (planeType == FRONT_PLANE) {
-      vec3 piercingPoint = 0.5 * (pos.xzy + vec3(1.0, 1.0, 1.0));
-      vec3 offsetV = vec3(0.0
-                          , piercingPoint.y
+    // int planeType = planeDetect(pos);
+    // if (planeType == FRONT_PLANE) {
+    //   vec3 piercingPoint = 0.5 * (pos.xzy + vec3(1.0, 1.0, 1.0));
+    //   vec3 offsetV = vec3(0.0
+    //                       , piercingPoint.y
 
-                          , fround(piercingPoint.y * float(SLICE_NUM))
-                          );
-      vec3 stepV = vec3(
-                        -sin(rayV.x / (rayV.y  / sliceUvRatio))
-                        , -1.0 / float(SLICE_NUM)
-                        , -sin(rayV.z / (rayV.y / sliceUvRatio))
-                        );
-      fColor = rayCast(pos.xzy
-                       , scale
-                       , stepV
-                       , bvec2(false, false)
-                       , offsetV);
-    }
-    else if (planeType == TOP_PLANE) {
-      vec3 offsetV = vec3(0.0, 0.0, SLICE_NUM - 1);
-      vec3 stepV = vec3(-sin(rayV.x / (rayV.z / sliceUvRatio))
-                        , -sin(rayV.y / (rayV.z / sliceUvRatio))
-                        , - sliceUvRatio);
-      fColor = rayCast(pos.xyz
-                       , scale
-                       , stepV
-                       , bvec2(false, false)
-                       , offsetV);
-    }
-    else if (planeType == BACK_PLANE) {
-      vec3 piercingPoint = 0.5 * (pos.xzy + vec3(1.0, 1.0, 1.0));
-      vec3 offsetV = vec3(0.0
-                          , -piercingPoint.y
+    //                       , fround(piercingPoint.y * float(SLICE_NUM))
+    //                       );
+    //   vec3 stepV = vec3(
+    //                     -sin(rayV.x / (rayV.y  / sliceUvRatio))
+    //                     , -1.0 / float(SLICE_NUM)
+    //                     , -sin(rayV.z / (rayV.y / sliceUvRatio))
+    //                     );
+    //   fColor = rayCast(pos.xzy
+    //                    , scale
+    //                    , stepV
+    //                    , bvec2(false, false)
+    //                    , offsetV);
+    // }
+    // else if (planeType == TOP_PLANE) {
+    //   vec3 offsetV = vec3(0.0, 0.0, SLICE_NUM - 1);
+    //   vec3 stepV = vec3(-sin(rayV.x / (rayV.z / sliceUvRatio))
+    //                     , -sin(rayV.y / (rayV.z / sliceUvRatio))
+    //                     , - sliceUvRatio);
+    //   fColor = rayCast(pos.xyz
+    //                    , scale
+    //                    , stepV
+    //                    , bvec2(false, false)
+    //                    , offsetV);
+    // }
+    // else if (planeType == BACK_PLANE) {
+    //   vec3 piercingPoint = 0.5 * (pos.xzy + vec3(1.0, 1.0, 1.0));
+    //   vec3 offsetV = vec3(0.0
+    //                       , -piercingPoint.y
 
-                          , fround(piercingPoint.y * float(SLICE_NUM))
-                          );
-      vec3 stepV = vec3(
-                        sin(rayV.x / (rayV.y  / sliceUvRatio))
-                        , 1.0 / float(SLICE_NUM)
-                        , sin(rayV.z / (rayV.y / sliceUvRatio))
-                        );
-      fColor = rayCast(pos.xzy
-                       , scale
-                       , stepV
-                       , bvec2(false, false)
-                       , offsetV);
-    }
+    //                       , fround(piercingPoint.y * float(SLICE_NUM))
+    //                       );
+    //   vec3 stepV = vec3(
+    //                     sin(rayV.x / (rayV.y  / sliceUvRatio))
+    //                     , 1.0 / float(SLICE_NUM)
+    //                     , sin(rayV.z / (rayV.y / sliceUvRatio))
+    //                     );
+    //   fColor = rayCast(pos.xzy
+    //                    , scale
+    //                    , stepV
+    //                    , bvec2(false, false)
+    //                    , offsetV);
+    // }
 
-    else if (planeType == BOT_PLANE) {
-      vec3 piercingPoint = 0.5 * (pos.xyz + vec3(1.0, 1.0, 1.0));
-      vec3 offsetV = vec3(0.0, 0.0, 0.0);
-      // fColor = vec4(
-      //               offsetV.x
-      //               ,0.0
-      //               //, piercingPoint.x
-      //               , 0.0
-      //               , 1.0);
+    // else if (planeType == BOT_PLANE) {
+    //   vec3 piercingPoint = 0.5 * (pos.xyz + vec3(1.0, 1.0, 1.0));
+    //   vec3 offsetV = vec3(0.0, 0.0, 0.0);
+    //   // fColor = vec4(
+    //   //               offsetV.x
+    //   //               ,0.0
+    //   //               //, piercingPoint.x
+    //   //               , 0.0
+    //   //               , 1.0);
 
-      vec3 stepV = vec3(-sin(rayV.x / (rayV.z / sliceUvRatio))
-                        , sin(rayV.y / (rayV.z / sliceUvRatio) )
-                        , sliceUvRatio);
-      fColor = rayCast(pos.xyz
-                       , scale
-                       , stepV
-                       , bvec2(true, false)
-                       , offsetV);
-    }
-    else if (planeType == LEFT_PLANE) {
-      vec3 piercingPoint = 0.5 * (pos.zyx + vec3(1.0, 1.0, 1.0));
-      vec3 offsetV = vec3(-piercingPoint.x
-                          , 0.0
+    //   vec3 stepV = vec3(-sin(rayV.x / (rayV.z / sliceUvRatio))
+    //                     , sin(rayV.y / (rayV.z / sliceUvRatio) )
+    //                     , sliceUvRatio);
+    //   fColor = rayCast(pos.xyz
+    //                    , scale
+    //                    , stepV
+    //                    , bvec2(true, false)
+    //                    , offsetV);
+    // }
+    // else if (planeType == LEFT_PLANE) {
+    //   vec3 piercingPoint = 0.5 * (pos.zyx + vec3(1.0, 1.0, 1.0));
+    //   vec3 offsetV = vec3(-piercingPoint.x
+    //                       , 0.0
 
-                          , fround(piercingPoint.x * float(SLICE_NUM))
-                          );
-      vec3 stepV = vec3(
-                        1.0 / float(SLICE_NUM)
-                        , sin(rayV.y / (rayV.x  / sliceUvRatio))
-                        , sin(rayV.z / (rayV.x / sliceUvRatio))
-                        );
-      fColor = rayCast(pos.zyx
-                       , scale
-                       , stepV
-                       , bvec2(false, false)
-                       , offsetV);
-    }
-    else if (planeType == RIGHT_PLANE) {
-      vec3 piercingPoint = 0.5 * (pos.zyx + vec3(1.0, 1.0, 1.0));
-      vec3 offsetV = vec3(piercingPoint.x
-                          , 0.0
+    //                       , fround(piercingPoint.x * float(SLICE_NUM))
+    //                       );
+    //   vec3 stepV = vec3(
+    //                     1.0 / float(SLICE_NUM)
+    //                     , sin(rayV.y / (rayV.x  / sliceUvRatio))
+    //                     , sin(rayV.z / (rayV.x / sliceUvRatio))
+    //                     );
+    //   fColor = rayCast(pos.zyx
+    //                    , scale
+    //                    , stepV
+    //                    , bvec2(false, false)
+    //                    , offsetV);
+    // }
+    // else if (planeType == RIGHT_PLANE) {
+    //   vec3 piercingPoint = 0.5 * (pos.zyx + vec3(1.0, 1.0, 1.0));
+    //   vec3 offsetV = vec3(piercingPoint.x
+    //                       , 0.0
 
-                          , fround(piercingPoint.x * float(SLICE_NUM))
-                          );
-      vec3 stepV = vec3(
-                        -1.0 / float(SLICE_NUM)
-                        , -sin(rayV.y / (rayV.x  / sliceUvRatio))
-                        ,  -sin(rayV.z / (rayV.x / sliceUvRatio))
-                        );
-      fColor = rayCast(pos.zyx
-                       , scale
-                       , stepV
-                       , bvec2(false, false)
-                       , offsetV);
-    }
-    else
-      discard;
+    //                       , fround(piercingPoint.x * float(SLICE_NUM))
+    //                       );
+    //   vec3 stepV = vec3(
+    //                     -1.0 / float(SLICE_NUM)
+    //                     , -sin(rayV.y / (rayV.x  / sliceUvRatio))
+    //                     ,  -sin(rayV.z / (rayV.x / sliceUvRatio))
+    //                     );
+    //   fColor = rayCast(pos.zyx
+    //                    , scale
+    //                    , stepV
+    //                    , bvec2(false, false)
+    //                    , offsetV);
+    // }
+    // else
+                                //   discard;
 
 
     gl_FragColor = fColor;
