@@ -26,8 +26,14 @@ export function registerGui(appData, voxelDimensions, render) {
       ,["debug200", -200.0, 200.0, 1]
       ,["ambient", 1.0, 200.0]
       ,["zInterpolation"]
-      ,["begSlice", 0, voxelDimensions[2], 1]
-      ,["endSlice", 1, voxelDimensions[2], 1]]);
+      ,["begSliceX", 0, voxelDimensions[0], 1]
+      ,["endSliceX", 1, voxelDimensions[0], 1]
+      ,["begSliceY", 0, voxelDimensions[1], 1]
+      ,["endSliceY", 1, voxelDimensions[1], 1]
+      ,["begSliceZ", 0, voxelDimensions[2], 1]
+      ,["endSliceZ", 1, voxelDimensions[2], 1]
+    ]
+             );
   }
 
 

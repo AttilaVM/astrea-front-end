@@ -30,7 +30,7 @@ import { buildParticleSystem } from "./build/particle-system";
 import { buildVoxelBox } from "./build/voxel-box";
 import { registerTrackballControl } from "./control/trackball";
 import { registerGui } from "./gui";
-import { subtract } from "./math/vec3";
+import { cuboidNormalizer } from "./math/geo";
 
 
 export function initCellvis(containerElem
@@ -51,8 +51,12 @@ export function initCellvis(containerElem
     // Production state
     this.ambient = Math.E;
     this.zInterpolation = true;
-    this.begSlice = 0;
-    this.endSlice = voxelDimensions[2];
+    this.begSliceX = 0;
+    this.endSliceX = voxelDimensions[0];
+    this.begSliceY = 0;
+    this.endSliceY = voxelDimensions[1];
+    this.begSliceZ = 0;
+    this.endSliceZ = voxelDimensions[2];
   }
   let appData = new AppData();
 
@@ -92,6 +96,7 @@ export function initCellvis(containerElem
   // camera.rotation.y += Math.PI;
 
   const viewBoxGeo = new BoxBufferGeometry(2, 2, 2);
+  const volumetricScale = cuboidNormalizer(voxelDimensions);
   const volTexture = ImageUtils.loadTexture( "/img/voxeldata/mock-img-stack.png");
   volTexture.minFilter = NearestFilter;
   const uniforms = {
@@ -99,8 +104,16 @@ export function initCellvis(containerElem
     , debug1: {value: appData.debug1}
     , debug10: {value: appData.debug10}
     , debug200: {value: appData.debug200}
-    , begSlice: {type: "i", value: 1}
-    , endSlice: {type: "i", value: voxelDimensions[2] + 1}
+    , begSliceX: {type: "i", value: 1}
+    , endSliceX: {type: "i", value: voxelDimensions[0] + 1}
+    , begSliceY: {type: "i", value: 1}
+    , endSliceY: {type: "i", value: voxelDimensions[1] + 1}
+    , begSliceZ: {type: "i", value: 1}
+    , endSliceZ: {type: "i", value: voxelDimensions[2] + 1}
+    , volumetricScale: { type: "3fv", value: new Vector3(
+      volumetricScale[0]
+      ,volumetricScale[1]
+      ,volumetricScale[2] * zScaler)}
     , sliceUvRatio: {value: 1.0/voxelDimensions[2]}
     , sliceDistance: {value: 2 / voxelDimensions[2]}
     , discardThreshold: {value: 0.3}
@@ -180,8 +193,12 @@ export function initCellvis(containerElem
       .copy(camera.position)
       .normalize()
       .negate();
-    uniforms.begSlice.value = appData.begSlice;
-    uniforms.endSlice.value = appData.endSlice;
+    uniforms.begSliceX.value = appData.begSliceX;
+    uniforms.endSliceX.value = appData.endSliceX;
+    uniforms.begSliceY.value = appData.begSliceY;
+    uniforms.endSliceY.value = appData.endSliceY;
+    uniforms.begSliceZ.value = appData.begSliceZ;
+    uniforms.endSliceZ.value = appData.endSliceZ;
   }
 
   registerGui(appData, voxelDimensions, render);

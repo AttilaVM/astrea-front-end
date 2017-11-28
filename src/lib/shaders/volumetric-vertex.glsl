@@ -1,4 +1,5 @@
 uniform float sliceUvRatio;
+uniform vec3 volumetricScale;
 
 uniform float debug1;
 uniform float debug10;
@@ -9,6 +10,12 @@ varying vec3 pos;
 varying mat3 scale;
 
 void main() {
+  mat4 volumeScale =
+    mat4(volumetricScale.x, 0.0, 0.0, 0.0,
+         0.0, volumetricScale.y, 0.0, 0.0,
+         0.0, 0.0, volumetricScale.z, 0.0,
+         0.0, 0.0, 0.0, 1.0
+         );
   vUv = vec3(uv, 1.0);
   pos = position;
   scale = mat3(1.0, 0.0,          0.0,
@@ -17,5 +24,6 @@ void main() {
   gl_Position =
     projectionMatrix
     * modelViewMatrix
+    * volumeScale
     * vec4(position,1.0);
 }
