@@ -1,5 +1,6 @@
 // external
 import { apply
+         , reduce
          , map
          , multiply
        } from "ramda";
@@ -91,7 +92,7 @@ export function initCellvis(containerElem
   // camera.rotation.y += Math.PI;
 
   const viewBoxGeo = new BoxBufferGeometry(2, 2, 2);
-  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/generated-4.png");
+  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/mock-img-stack.png");
   volTexture.minFilter = NearestFilter;
   const uniforms = {
     voxelSize: {value: 1.0}
@@ -138,7 +139,15 @@ export function initCellvis(containerElem
       , PI: 3.1415926535897932384626433832795
       , Y_SIZE: voxelDimensions[1] + ".0"
       , Z_SIZE: voxelDimensions[2] + ".0"
-      , V_MAX: apply(Math.max, voxelDimensions)
+      , V_MAX:
+      Math.ceil(
+        Math.sqrt(
+          reduce(
+            function (v, c) {
+              return c+v*v;
+            }
+            , 0
+            , voxelDimensions)))
       , SLICE_NUM: voxelDimensions[2]
       , SLICE_UV_RATIO: 1 / voxelDimensions[2] + ".0"
       , DATA_LENGTH: voxelData.length

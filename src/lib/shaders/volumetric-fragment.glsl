@@ -188,19 +188,48 @@ vec4 rayCastOld(vec3 planeCoo, mat3 scale, vec3 stepV, bvec2 flip, vec3 offsetV)
     return fColor;
   }
 
+float calcSliceInterpolationFactor(float D_rz) {
+  float f_i =fract(D_rz);
+  if (f_i < 0.0)
+    f_i = 1.0 - abs(f_i);
+  return f_i;
+}
+
 vec4 rayCast(vec3 P_r, mat3 scale, int samplingRate) {
   vec3 uv;
   vec4 fColor = vec4(0.0);
-  for (int i = 0; i < V_MAX; i++) {
-    if (i == samplingRate || i == endSlice)
-      break;
+  float zMax = v.z - 1.0;
+  float attenuation = 1.0;
+  for (int i = 0; i <= V_MAX; i++) {
+    // if (i == endSlice)
+    //   break;
+    if (i < begSlice - 1)
+      continue;
     float s_r = float(i);
-    P_r = P_r + s_r * (rayVn / v);
-    uv = scale * vec3(P_r.x
-                      , P_r.y
-                      + fround(P_r.z * (v.z - 1.0))
+    attenuation -= debug1;
+    vec3 D_r = P_r + s_r * (rayVn / v);
+    if (   any(greaterThan(D_r, vec3(1.0, 1.0, 1.0)))
+           || any(lessThan(D_r, vec3(0.0, 0.0, 0.0))))
+      break;
+    float D_rz = D_r.z * zMax;
+    // Calculate slice interpolation factor
+    float f_i = abs(fract(D_rz));
+    uv = scale * vec3(D_r.x
+                      , D_r.y
+                      + floor(D_rz)
                       , 1.0);
-    fColor += texture2D(volTexture, uv.xy) / float(samplingRate) * ambient;
+    fColor += texture2D(volTexture, uv.xy) / float(samplingRate) * ambient * (1.0 - f_i);
+    if (zInterpolation) {
+      float farZ = ceil(D_rz);
+      if (farZ > zMax
+          || farZ < 0.0)
+        break;
+      uv = scale * vec3(D_r.x
+                      , D_r.y
+                      + farZ
+                      , 1.0);
+      fColor += texture2D(volTexture, uv.xy) / float(samplingRate) * ambient * f_i;
+    }
   }
   return fColor;
 }
