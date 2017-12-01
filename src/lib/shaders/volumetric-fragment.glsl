@@ -34,20 +34,6 @@ varying mat3 scale;
     return (c.r + c.g + c.b) / 3.0 * c.a;
   }
 
-// NOTE: There is no round(x) built in function
-// NOTE OPTIMALIZATION: It will receive only positive values
-float fround(float x) {
-  float x_f = floor(x);
-  float fraction = x - x_f;
-  if (abs(fraction) < 0.5)
-    return x_f;
-  else
-    if(x > 0.0)
-      return x_f + 1.0;
-    else
-      return x_f - 1.0;
-}
-
 vec4 rayCast(vec3 P_r, mat3 scale, int samplingRate) {
   vec3 uv;
   vec4 fColor = vec4(0.0);
@@ -100,7 +86,8 @@ vec4 rayCast(vec3 P_r, mat3 scale, int samplingRate) {
         sColor
         / float(samplingRate)
         * ambient
-        * (1.0 - fColor * debug10);
+        //* (1.0 - fColor * debug10)
+        ;
     }
     else
       fColor += sColor / float(samplingRate) * ambient;

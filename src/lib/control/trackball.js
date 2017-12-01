@@ -15,7 +15,7 @@ export function registerTrackballControl(
   controls.zoomSpeed = zoomSpeed;
   controls.panSpeed = panSpeed;
   controls.dynamicDampingFactor = dynamicDampingFactor;
-  controls.noZoom = false;
+  controls.noZoom = true;
   controls.noPan = false;
   controls.staticMoving = true;
 

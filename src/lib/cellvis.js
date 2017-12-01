@@ -4,7 +4,6 @@ import { apply
          , map
          , multiply
        } from "ramda";
-import Stats from "stats-js";
 // import dat from "../../submodules/dat.gui/index";
 import
 { Scene
@@ -29,6 +28,7 @@ import { scaleInCubeScaler } from "./geometry-utils";
 import { buildParticleSystem } from "./build/particle-system";
 import { buildVoxelBox } from "./build/voxel-box";
 import { registerTrackballControl } from "./control/trackball";
+import { registerOrthoControls } from "./control/ortho";
 import { registerGui } from "./gui";
 import { cuboidNormalizer } from "./math/geo";
 
@@ -65,33 +65,30 @@ export function initCellvis(containerElem
   let canvasRatio = canvasWidth / canvasHeight;
   // Basic scene setup
   const scene = new Scene();
-  scene.background = new Color(0x292929);
+  scene.background = new Color(0x333333);
   const renderer = new WebGLRenderer();
   renderer.setSize(canvasWidth, canvasHeight);
   /// Adapt to displays with different pixel densities
   renderer.setPixelRatio(devicePixelRatio);
   /// Append canvas
-
   containerElem.appendChild(renderer.domElement);
-  const stats = new Stats();
-  stats.domElement.style.position = "absolute";
-  stats.domElement.style.top = "0px";
-  containerElem.appendChild(stats.domElement);
   const axes = new AxisHelper(20);
-  const camera =
-    new PerspectiveCamera( 75, canvasRatio , 0.1, 3000);
-  // const camera = new OrthographicCamera(
-  //   - canvasWidth / 2
-  //   , canvasWidth / 2
-  //   , canvasHeight / 2
-  //   , - canvasHeight / 2
-  //   , 1
-  //   , 1000
-  // );
+  // const camera =
+  //   new PerspectiveCamera( 75, canvasRatio , 0.1, 3000);
+  const screenSpace = cuboidNormalizer([canvasWidth, canvasHeight]);
+  console.log(screenSpace);
+  const camera = new OrthographicCamera(
+      -2 * screenSpace[0]
+    ,  2 * screenSpace[0]
+    ,  2 * screenSpace[1]
+    , -2 * screenSpace[1]
+    , 1
+    , 15
+  );
   camera.name = "p-camera";
   camera.position.x = 0;
   camera.position.y = 0;
-  camera.position.z = 2.6;
+  camera.position.z = 5;
   // camera.rotation.x += Math.PI;
   // camera.rotation.y += Math.PI;
 
@@ -175,9 +172,9 @@ export function initCellvis(containerElem
   scene.add(camera);
 
   function render() {
-    console.log(
-      camera.position
-      , Math.atan(camera.position.x / camera.position.z));
+    // console.log(
+    //   camera.position
+    //   , Math.atan(camera.position.x / camera.position.z));
     renderer.render(scene, camera);
     let matUniforms = displayBox.material.uniforms;
     // update shader
@@ -202,17 +199,22 @@ export function initCellvis(containerElem
   }
 
   registerGui(appData, voxelDimensions, render);
+  registerOrthoControls(camera
+                        , renderer.domElement
+                        , 1
+                        , 5
+                        , {render: render});
 
-  const controls = registerTrackballControl(
-    camera
-    , render
-    , renderer);
+  // const controls = registerTrackballControl(
+  //   camera
+  //   , render
+  //   , renderer);
 
 
   function animate() {
     requestAnimationFrame(animate);
     // Only re-render on control events
-    controls.update();
+    //controls.update();
 
   }
 
