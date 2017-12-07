@@ -11,6 +11,7 @@ uniform vec3 v;
 uniform sampler2D volTexture;
 uniform float sliceDistance;
 uniform float ambient;
+uniform float zoom;
 uniform bool zInterpolation;
 uniform vec3 rayV;
 uniform vec3 rayVn;
@@ -28,6 +29,9 @@ uniform float debug200;
 varying vec3 vUv;
 varying vec3 pos;
 varying mat3 scale;
+varying mat4 modelView;
+varying mat4 projection;
+varying mat4 volumeScale;
 
   float calcColorIntensity(vec4 c) {
     // NOTE OPTIMALIZATION: if I keep using this for comparison only, it shouldn't be normalized.
@@ -96,6 +100,16 @@ vec4 rayCast(vec3 P_r, mat3 scale, int samplingRate) {
 }
 
   void main() {
+    // frustrum culling
+    vec4 projectedPos =
+      projection
+      * modelView
+      * volumeScale
+      * vec4(pos,1.0);
+    if(any(greaterThan(projectedPos.xy, vec2(1.0, 1.0)))
+       || any(lessThan(projectedPos.xy, vec2(-1.0, -1.0))))
+      discard;
+
     vec3 P_r = 0.5 * (pos + vec3(1.0, 1.0, 1.0));
     // It could be more precise
     int samplingRate =
@@ -104,6 +118,8 @@ vec4 rayCast(vec3 P_r, mat3 scale, int samplingRate) {
            + abs(dot(vec3(0.0, 0.0, 1.0), rayV)) * v.z
               ) / 3.0);
     vec4 fColor = rayCast(P_r, scale, samplingRate);
+
+    //fColor = projectedPos;
 
     gl_FragColor = fColor;
   }

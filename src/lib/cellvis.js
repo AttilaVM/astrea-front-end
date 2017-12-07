@@ -185,7 +185,7 @@ export function initCellvis(containerElem
       if (e.transformFun)
         uniforms[e.name].value = e.transformFun(e.value);
       else
-              uniforms[e.name].value = e.value;
+        uniforms[e.name].value = e.value;
     }
     render();
   });
@@ -196,15 +196,18 @@ export function initCellvis(containerElem
     , 5);
 
   camCtrlEmitter.addEventListener("rotate", function (e) {
-      uniforms.rayVn.value = e.sphericalPosition
-        .normalize()
-        .negate();
-      render();
+    console.log(e.sphericalPosition);
+    uniforms.rayV.value = e.sphericalPosition;
+    uniforms.rayVn.value = e.sphericalPosition
+      .normalize()
+      .negate();
+    render();
+
     });
   camCtrlEmitter.addEventListener("pan", function () {
     render();
   });
-  camCtrlEmitter.addEventListener("zoom", function () {
+  camCtrlEmitter.addEventListener("zoom", function (e) {
     render();
   });
 

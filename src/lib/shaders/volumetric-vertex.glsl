@@ -8,9 +8,15 @@ uniform float debug200;
 varying vec3 vUv;
 varying vec3 pos;
 varying mat3 scale;
+varying mat4 modelView;
+varying mat4 projection;
+varying mat4 volumeScale;
 
 void main() {
-  mat4 volumeScale =
+  modelView = modelViewMatrix;
+  projection = projectionMatrix;
+
+  volumeScale =
     mat4(volumetricScale.x, 0.0, 0.0, 0.0,
          0.0, volumetricScale.y, 0.0, 0.0,
          0.0, 0.0, volumetricScale.z, 0.0,
