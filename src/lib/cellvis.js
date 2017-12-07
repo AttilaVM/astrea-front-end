@@ -31,6 +31,7 @@ import { registerTrackballControl } from "./control/trackball";
 import { registerOrthoControls } from "./control/ortho";
 import { registerGui } from "./gui";
 import { cuboidNormalizer } from "./math/geo";
+import { rgbArrToHex } from "./color-utils";
 
 
 export function initCellvis(containerElem
@@ -49,6 +50,7 @@ export function initCellvis(containerElem
     this.debug10 = 10;
     this.debug200 = 200;
     // Production state
+    this.bgColor = 0x000000;
     this.ambient = Math.E;
     this.zInterpolation = true;
     this.begSliceX = 0;
@@ -65,7 +67,7 @@ export function initCellvis(containerElem
   let canvasRatio = canvasWidth / canvasHeight;
   // Basic scene setup
   const scene = new Scene();
-  scene.background = new Color(0x333333);
+  scene.background = new Color(appData.bgColor);
   const renderer = new WebGLRenderer();
   renderer.setSize(canvasWidth, canvasHeight);
   /// Adapt to displays with different pixel densities
