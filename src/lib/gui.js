@@ -1,50 +1,93 @@
-export function registerGui(appData, voxelDimensions, render) {
-  // Check if dat.gui is loaded
+import { EventDispatcher } from "three";
+
+export function registerGui(appData
+                            , voxelDimensions
+                            , render) {
+
+  function Emitter() {
+    this.change = function change(name, value, uniformP, transformFun) {
+      this.dispatchEvent({type: "change"
+                          , name: name
+                          , value: value
+                          , uniformP
+                          , transformFun});
+    };
+  }
+  Object.assign(Emitter.prototype, EventDispatcher.prototype);
+
   if (dat) {
     let gui = new dat.GUI();
+    const emitter = new Emitter();
 
     function updateGui(opts) {
-      for (let opt of opts) {
-        if (Array.isArray(opts)) {
-          let [name, start, stop, step] = opt;
-          gui.add(
-            appData
-            , name
-            , start
-            , stop
-            , step)
-            .onChange(render)
-            .onFinishChange(render);
-        }
-        else {
-          let name = opts[0];
-          gui.addColor(appData, name);
-        }
+      for (let opt of opts.numbers) {
+        let [
+          name
+          , start
+          , stop
+          , step
+          , uniformP
+          , transformFun] = opt;
+            gui.add(
+              appData
+              , name
+              , start
+              , stop
+              , step)
+              .onChange(function (value) {
+                emitter.change(name
+                               , value
+                               , uniformP
+                               , transformFun);
+              })
+              .onFinishChange(function (value) {
+                emitter.change(name
+                               , value
+                               , uniformP
+                               , transformFun);
+              });
+      }
+      for (let opt of opts.booleans) {
+        let [name, uniformP] = opt;
+        gui.add(
+          appData
+          , name)
+          .onChange(function (value) {
+            emitter.change(name, value, uniformP);
+          })
+          .onFinishChange(function (value) {
+            emitter.change(name, value, uniformP);
+          });
+      }
+      for (let opt of opts.colors) {
+        let name = opt[0];
+        gui.addColor(appData, name);
       }
     }
 
-    updateGui([
-      ["xNormal", -1, 1, 0.001]
-      , ["yNormal", -1, 1, 0.001]
-      , ["zNormal", 0, 1, 0.01]
-      , ["debug1", -1.0, 1.0, 0.001]
-      , ["debug10", -10.0, 10.0, 0.1]
-      , ["debug200", -200.0, 200.0, 1]
-      , ["ambient", 1.0, 200.0]
-      , ["zInterpolation"]
-      , ["begSliceX", 0, voxelDimensions[0], 1]
-      , ["endSliceX", 1, voxelDimensions[0], 1]
-      , ["begSliceY", 0, voxelDimensions[1], 1]
-      , ["endSliceY", 1, voxelDimensions[1], 1]
-      , ["begSliceZ", 0, voxelDimensions[2], 1]
-      , ["endSliceZ", 1, voxelDimensions[2], 1]
-      , ["bgColor"]
-    ]);
-
+    updateGui({
+      numbers: [
+        ["xNormal", -1, 1, 0.001, true]
+        , ["yNormal", -1, 1, 0.001, true]
+        , ["zNormal", 0, 1, 0.01, true]
+        , ["debug1", -1.0, 1.0, 0.001, true]
+        , ["debug10", -10.0, 10.0, 0.1, true]
+        , ["debug200", -200.0, 200.0, 1, true]
+        , ["ambient", 1.0, 200.0, 0.01, true, Math.log]
+        , ["begSliceX", 0, voxelDimensions[0], 1, true]
+        , ["endSliceX", 1, voxelDimensions[0], 1, true]
+        , ["begSliceY", 0, voxelDimensions[1], 1, true]
+        , ["endSliceY", 1, voxelDimensions[1], 1, true]
+        , ["begSliceZ", 0, voxelDimensions[2], 1, true]
+        , ["endSliceZ", 1, voxelDimensions[2], 1, true]
+      ]
+      , booleans: [["zInterpolation", true]]
+      , colors: [["bgColor"]]});
+    return emitter;
   }
 
 
   else {
-    console.warn("Please include dat.gui into your webpage: https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.5/dat.gui.min.js");
+    Console.Warn("Please include da, truet.gui into your webpage: https://cdnjs.cloudflare.com/ajax/lib, trues/dat-gui/0.6.5/dat.gui.min.js");
   }
 }

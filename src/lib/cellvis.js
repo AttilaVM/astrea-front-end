@@ -169,58 +169,50 @@ export function initCellvis(containerElem
   const displayBox = new Mesh(viewBoxGeo, volumetricMaterial);
   // Populate Scene
   scene.add(axes);
-  // scene.add(particleSystem);
   scene.add(displayBox);
   scene.add(camera);
 
   function render() {
-    // console.log(
-    //   camera.position
-    //   , Math.atan(camera.position.x / camera.position.z));
     renderer.render(scene, camera);
-    let matUniforms = displayBox.material.uniforms;
-    // update shader
-    uniforms.debug1.value = appData.debug1;
-    uniforms.debug10.value = appData.debug10;
-    uniforms.debug200.value = appData.debug200;
-    uniforms.ambient =
-      {value: Math.log(appData.ambient)};
-    uniforms.zInterpolation.value = appData.zInterpolation;
-    uniforms.rayV.value = camera.position;
-    uniforms.rayVn.value =
-      new Vector3()
-      .copy(camera.position)
-      .normalize()
-      .negate();
-    uniforms.begSliceX.value = appData.begSliceX;
-    uniforms.endSliceX.value = appData.endSliceX;
-    uniforms.begSliceY.value = appData.begSliceY;
-    uniforms.endSliceY.value = appData.endSliceY;
-    uniforms.begSliceZ.value = appData.begSliceZ;
-    uniforms.endSliceZ.value = appData.endSliceZ;
   }
 
-  registerGui(appData, voxelDimensions, render);
-  registerOrthoControls(camera
-                        , renderer.domElement
-                        , 1
-                        , 5
-                        , {render: render});
+  const guiEmitter = registerGui(
+    appData
+    , voxelDimensions
+    , render);
+  guiEmitter.addEventListener("change", function (e) {
+    if (e.uniformP){
+      if (e.transformFun)
+        uniforms[e.name].value = e.transformFun(e.value);
+      else
+              uniforms[e.name].value = e.value;
+    }
+    render();
+  });
+  const camCtrlEmitter = registerOrthoControls(
+    camera
+    , renderer.domElement
+    , 1
+    , 5);
 
-  // const controls = registerTrackballControl(
-  //   camera
-  //   , render
-  //   , renderer);
+  camCtrlEmitter.addEventListener("rotate", function (e) {
+      uniforms.rayVn.value = e.sphericalPosition
+        .normalize()
+        .negate();
+      render();
+    });
+  camCtrlEmitter.addEventListener("pan", function () {
+    render();
+  });
+  camCtrlEmitter.addEventListener("zoom", function () {
+    render();
+  });
 
 
   function animate() {
     requestAnimationFrame(animate);
-    // Only re-render on control events
-    //controls.update();
-
   }
 
-  // render initial frame
   render();
   animate();
 }
