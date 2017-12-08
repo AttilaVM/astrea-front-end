@@ -118,7 +118,9 @@ export function initCellvis(containerElem
     , discardThreshold: {value: 0.3}
     , ambient: { value: appData.ambient }
     , zInterpolation: { type: "b", value: appData.zInterpolation }
-    , rayV: {type: "3fv", value: camera.position}
+    , rayV: {type: "3fv", value:
+             new Vector3()
+             .copy(camera.position)}
     , rayVn: {type: "3fv", value:
               new Vector3()
               .copy(camera.position)
@@ -175,6 +177,7 @@ export function initCellvis(containerElem
   function render() {
     renderer.render(scene, camera);
   }
+  volTexture.image.onload = render;
 
   const guiEmitter = registerGui(
     appData
@@ -210,12 +213,4 @@ export function initCellvis(containerElem
   camCtrlEmitter.addEventListener("zoom", function (e) {
     render();
   });
-
-
-  function animate() {
-    requestAnimationFrame(animate);
-  }
-
-  render();
-  animate();
 }

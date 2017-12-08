@@ -18,11 +18,9 @@ stdenv.mkDerivation rec {
   env = buildEnv { name = name; paths = buildInputs; };
   buildInputs = [
     git
-    chromiumBeta
+    xautomation
+    # chromiumBeta
     nodejs
-    nodePackages.tern
-    nodePackages.gulp
-    nodePackages.rollup
-    nodePackages.node-sass
+
   ];
 }

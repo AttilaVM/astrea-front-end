@@ -172,7 +172,9 @@ export function registerOrthoControls(camera
     }
 
     rotateCam(a, b, 3);
-    emitter.rotate(newPos.clone());
+    emitter.rotate(camera.position
+                   .clone()
+                   .sub(target));
   }
   function rotateEnd(e) {
     if (e.clientX) {
