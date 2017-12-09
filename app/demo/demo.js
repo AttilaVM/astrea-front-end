@@ -1,15 +1,15 @@
+const navEmitter =  CellVis.urlNav();
+
 var imgData = CellVis.fetchFiles(
-  "/img/voxeldata/mock-img-stack.png"
-  , "mock-img-stack.json"
+  "mock-img-stack.json"
   , "shaders/volumetric-vertex.glsl"
   , "shaders/volumetric-fragment.glsl").then((values) => {
-    const [voxelImg
-           , sampleData
+    const [sampleData
            , vertexShader
            , fragmentShader] = values;
   const containerElem = document.getElementById("canvas_container");
   CellVis.initCellvis(containerElem
-                      , voxelImg.data
+                      , sampleData.voxelSrc
                       , sampleData.scale
                       , sampleData.zScaler
                       , sampleData.metaData

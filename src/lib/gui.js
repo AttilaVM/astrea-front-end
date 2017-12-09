@@ -67,10 +67,7 @@ export function registerGui(appData
 
     updateGui({
       numbers: [
-        ["xNormal", -1, 1, 0.001, true]
-        , ["yNormal", -1, 1, 0.001, true]
-        , ["zNormal", 0, 1, 0.01, true]
-        , ["debug1", -1.0, 1.0, 0.001, true]
+        ["debug1", -1.0, 1.0, 0.001, true]
         , ["debug10", -10.0, 10.0, 0.1, true]
         , ["debug200", -200.0, 200.0, 1, true]
         , ["ambient", 1.0, 200.0, 0.01, true, Math.log]

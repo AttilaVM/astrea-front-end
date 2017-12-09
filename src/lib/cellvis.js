@@ -31,11 +31,10 @@ import { registerTrackballControl } from "./control/trackball";
 import { registerOrthoControls } from "./control/ortho";
 import { registerGui } from "./gui";
 import { cuboidNormalizer } from "./math/geo";
-import { rgbArrToHex } from "./color-utils";
-
+import { maxTraceLength, calcVolumeScale } from "./shaders/preprocess.js";
 
 export function initCellvis(containerElem
-                            , voxelData
+                            , voxelSrcUrl
                             , voxelDimensions
                             , zScaler
                             , metaData
@@ -43,9 +42,6 @@ export function initCellvis(containerElem
                             , fragmentShader) {
   function AppData() {
     // Development sate
-    this.xNormal = 0;
-    this.yNormal = 0;
-    this.zNormal = 1;
     this.debug1 = 1;
     this.debug10 = 10;
     this.debug200 = 200;
@@ -78,7 +74,6 @@ export function initCellvis(containerElem
   // const camera =
   //   new PerspectiveCamera( 75, canvasRatio , 0.1, 3000);
   const screenSpace = cuboidNormalizer([canvasWidth, canvasHeight]);
-  console.log(screenSpace);
   const camera = new OrthographicCamera(
       -2 * screenSpace[0]
     ,  2 * screenSpace[0]
@@ -87,7 +82,7 @@ export function initCellvis(containerElem
     , 1
     , 15
   );
-  camera.name = "p-camera";
+  camera.name = "main-camera";
   camera.position.x = 0;
   camera.position.y = 0;
   camera.position.z = 5;
@@ -95,8 +90,7 @@ export function initCellvis(containerElem
   // camera.rotation.y += Math.PI;
 
   const viewBoxGeo = new BoxBufferGeometry(2, 2, 2);
-  const volumetricScale = cuboidNormalizer(voxelDimensions);
-  const volTexture = ImageUtils.loadTexture( "/img/voxeldata/mock-img-stack.png");
+  const volTexture = ImageUtils.loadTexture(voxelSrcUrl);
   volTexture.minFilter = NearestFilter;
   const uniforms = {
     voxelSize: {value: 1.0}
@@ -109,10 +103,11 @@ export function initCellvis(containerElem
     , endSliceY: {type: "i", value: voxelDimensions[1] + 1}
     , begSliceZ: {type: "i", value: 1}
     , endSliceZ: {type: "i", value: voxelDimensions[2] + 1}
-    , volumetricScale: { type: "3fv", value: new Vector3(
-      volumetricScale[0]
-      ,volumetricScale[1]
-      ,volumetricScale[2] * zScaler)}
+    , volumeScaleMatrix: {
+      type: "m4"
+      , value: calcVolumeScale(
+        voxelDimensions,
+        zScaler)}
     , sliceUvRatio: {value: 1.0/voxelDimensions[2]}
     , sliceDistance: {value: 2 / voxelDimensions[2]}
     , discardThreshold: {value: 0.3}
@@ -127,6 +122,7 @@ export function initCellvis(containerElem
               .normalize()
               .negate()
              }
+    , maxTraceLength: {value: voxelDimensions[2]}
     , v: {type: "3fv", value: new Vector3(
       voxelDimensions[0]
       , voxelDimensions[1]
@@ -164,7 +160,6 @@ export function initCellvis(containerElem
             , voxelDimensions)))
       , SLICE_NUM: voxelDimensions[2]
       , SLICE_UV_RATIO: 1 / voxelDimensions[2] + ".0"
-      , DATA_LENGTH: voxelData.length
     }
 
   });
@@ -199,11 +194,14 @@ export function initCellvis(containerElem
     , 5);
 
   camCtrlEmitter.addEventListener("rotate", function (e) {
-    console.log(e.sphericalPosition);
-    uniforms.rayV.value = e.sphericalPosition;
-    uniforms.rayVn.value = e.sphericalPosition
+    uniforms.rayV.value = camera.position; //e.sphericalPosition;
+    uniforms.rayVn.value =
+      e.sphericalPosition
       .normalize()
       .negate();
+
+    uniforms.maxTraceLength.value = maxTraceLength(camera.position, voxelDimensions);
+
     render();
 
     });

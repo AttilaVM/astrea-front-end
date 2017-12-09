@@ -11,6 +11,7 @@
 - [ ] Camera Control should log its state as an URL, which would provide the possibility to share user views.
 - [ ] Window scale responsivness.
 - [ ] Separate Orthographics Camera Control to its own module
+- [ ] Camera view slicer
 - [ ] VR gui
 - [ ] ranged sliders for xyz clipping
 - [ ] Dive into the shader
