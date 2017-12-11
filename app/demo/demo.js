@@ -1,22 +1,11 @@
+let loadedDataId;
+let teardownFun;
 const navEmitter =  CellVis.urlNav();
 
-var imgData = CellVis.fetchFiles(
-  "mock-img-stack.json"
-  , "shaders/volumetric-vertex.glsl"
-  , "shaders/volumetric-fragment.glsl").then((values) => {
-    const [sampleData
-           , vertexShader
-           , fragmentShader] = values;
-  const containerElem = document.getElementById("canvas_container");
-  CellVis.initCellvis(containerElem
-                      , sampleData.voxelSrc
-                      , sampleData.scale
-                      , sampleData.zScaler
-                      , sampleData.metaData
-                      , vertexShader
-                      , fragmentShader);
+CellVis.cellvisCtrl(navEmitter.initialData.data);
 
-
-}).catch((err) => {
-  console.error(err);
+navEmitter.addEventListener("urlcmd", function (e) {
+  if (e.name == "data") {
+    CellVis.cellvisCtrl(e.value);
+  }
 });

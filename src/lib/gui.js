@@ -18,6 +18,9 @@ export function registerGui(appData
   if (dat) {
     let gui = new dat.GUI();
     const emitter = new Emitter();
+    emitter.teardownGui = function teardownGui() {
+      gui.destroy();
+    };
 
     function updateGui(opts) {
       for (let opt of opts.numbers) {

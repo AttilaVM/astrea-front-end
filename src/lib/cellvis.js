@@ -24,6 +24,7 @@ import
 } from "three";
 // internal
 import { VoxelGenerator } from "./processing/stack-processing.js";
+import { fetchFiles } from "./image_loader";
 import { scaleInCubeScaler } from "./geometry-utils";
 import { buildParticleSystem } from "./build/particle-system";
 import { buildVoxelBox } from "./build/voxel-box";
@@ -32,6 +33,8 @@ import { registerOrthoControls } from "./control/ortho";
 import { registerGui } from "./gui";
 import { cuboidNormalizer } from "./math/geo";
 import { maxTraceLength, calcVolumeScale } from "./shaders/preprocess.js";
+
+// state
 
 export function initCellvis(containerElem
                             , voxelSrcUrl
@@ -75,7 +78,7 @@ export function initCellvis(containerElem
   //   new PerspectiveCamera( 75, canvasRatio , 0.1, 3000);
   const screenSpace = cuboidNormalizer([canvasWidth, canvasHeight]);
   const camera = new OrthographicCamera(
-      -2 * screenSpace[0]
+    -2 * screenSpace[0]
     ,  2 * screenSpace[0]
     ,  2 * screenSpace[1]
     , -2 * screenSpace[1]
@@ -204,11 +207,47 @@ export function initCellvis(containerElem
 
     render();
 
-    });
+  });
   camCtrlEmitter.addEventListener("pan", function () {
     render();
   });
   camCtrlEmitter.addEventListener("zoom", function (e) {
     render();
   });
+
+  return function teardown() {
+    containerElem.removeChild(renderer.domElement);
+    guiEmitter.teardownGui();
+  };
+}
+
+export function destructCellvis() {
+
+}
+
+let teardownFun;
+export function cellvisCtrl(id) {
+  if (teardownFun)
+    teardownFun();
+
+  let imgData = fetchFiles(
+    id + ".json"
+    , "shaders/volumetric-vertex.glsl"
+    , "shaders/volumetric-fragment.glsl")
+      .then((values) => {
+        const [sampleData
+               , vertexShader
+               , fragmentShader] = values;
+        const containerElem = document.getElementById("canvas_container");
+        teardownFun = initCellvis(
+          containerElem
+          , sampleData.voxelSrc
+          , sampleData.scale
+          , sampleData.zScaler
+          , sampleData.metaData
+          , vertexShader
+          , fragmentShader);
+      }).catch((err) => {
+        console.error(err);
+      });
 }

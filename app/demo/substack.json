@@ -3,6 +3,6 @@
   "thumbSrc": "img/thumb/substack.png",
   "voxelSrc": "img/voxeldata/substack.png",
   "scale": [340, 294, 38],
-  "zScaler": 9,
+  "zScaler": 1,
   "metaData": {}
 }

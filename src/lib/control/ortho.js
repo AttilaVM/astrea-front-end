@@ -189,7 +189,6 @@ export function registerOrthoControls(camera
   }
 
   function rotateStart(e) {
-    console.log("start");
     if (e.clientX){
       animOriginX = e.clientX;
       animOriginY = e.clientY;
