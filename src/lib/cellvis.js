@@ -30,7 +30,7 @@ import { buildParticleSystem } from "./build/particle-system";
 import { buildVoxelBox } from "./build/voxel-box";
 import { registerTrackballControl } from "./control/trackball";
 import { registerOrthoControls } from "./control/ortho";
-import { registerGui } from "./gui";
+import { registerGui, optionMap } from "./gui";
 import { cuboidNormalizer } from "./math/geo";
 import { maxTraceLength, calcVolumeScale } from "./shaders/preprocess.js";
 
@@ -49,9 +49,10 @@ export function initCellvis(containerElem
     this.debug10 = 10;
     this.debug200 = 200;
     // Production state
+    this.zScaler = zScaler;
     this.bgColor = 0x000000;
     this.ambient = Math.E;
-    this.zInterpolation = true;
+    this.interpolation = "linear";
     this.begSliceX = 0;
     this.endSliceX = voxelDimensions[0];
     this.begSliceY = 0;
@@ -82,8 +83,8 @@ export function initCellvis(containerElem
     ,  2 * screenSpace[0]
     ,  2 * screenSpace[1]
     , -2 * screenSpace[1]
-    , 1
-    , 15
+    , 0.01
+    , 25
   );
   camera.name = "main-camera";
   camera.position.x = 0;
@@ -115,7 +116,9 @@ export function initCellvis(containerElem
     , sliceDistance: {value: 2 / voxelDimensions[2]}
     , discardThreshold: {value: 0.3}
     , ambient: { value: appData.ambient }
-    , zInterpolation: { type: "b", value: appData.zInterpolation }
+    , interpolation: {
+      type: "i"
+      , value: optionMap("interpolation" ,"linear")}
     , rayV: {type: "3fv", value:
              new Vector3()
              .copy(camera.position)}
@@ -182,6 +185,20 @@ export function initCellvis(containerElem
     , voxelDimensions
     , render);
   guiEmitter.addEventListener("change", function (e) {
+    // special cases
+    if (e.name == "zScaler") {
+      uniforms.volumeScaleMatrix.value =
+        calcVolumeScale(voxelDimensions, e.value);
+      render();
+      return;
+    }
+    else if(e.name == "interpolation") {
+      uniforms[e.name].value = optionMap(e.name, e.value);
+      render();
+      return;
+    }
+
+
     if (e.uniformP){
       if (e.transformFun)
         uniforms[e.name].value = e.transformFun(e.value);

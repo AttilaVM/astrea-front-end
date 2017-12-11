@@ -1,5 +1,14 @@
 import { EventDispatcher } from "three";
 
+const optionDict = {
+  interpolation: {none: 0
+                  , nearest_neighbour: 1
+                  , linear: 2}};
+
+export function optionMap(name, value) {
+  return optionDict[name][value];
+}
+
 export function registerGui(appData
                             , voxelDimensions
                             , render) {
@@ -66,6 +75,16 @@ export function registerGui(appData
         let name = opt[0];
         gui.addColor(appData, name);
       }
+      for (let opt of opts.texts) {
+        let [name, options, uniformP] = opt;
+        gui.add(appData, name, options)
+        .onChange(function (value) {
+            emitter.change(name, value, uniformP);
+          })
+          .onFinishChange(function (value) {
+            emitter.change(name, value, uniformP);
+          });
+      }
     }
 
     updateGui({
@@ -74,6 +93,7 @@ export function registerGui(appData
         , ["debug10", -10.0, 10.0, 0.1, true]
         , ["debug200", -200.0, 200.0, 1, true]
         , ["ambient", 1.0, 200.0, 0.01, true, Math.log]
+        , ["zScaler", 0.01, 50, 0.01, true]
         , ["begSliceX", 0, voxelDimensions[0], 1, true]
         , ["endSliceX", 1, voxelDimensions[0], 1, true]
         , ["begSliceY", 0, voxelDimensions[1], 1, true]
@@ -81,8 +101,12 @@ export function registerGui(appData
         , ["begSliceZ", 0, voxelDimensions[2], 1, true]
         , ["endSliceZ", 1, voxelDimensions[2], 1, true]
       ]
-      , booleans: [["zInterpolation", true]]
-      , colors: [["bgColor"]]});
+      , booleans: []
+      , colors: [["bgColor"]]
+      , texts: [["interpolation", ["none"
+                                  , "nearest_neighbour"
+                                   , "linear"]
+                 , true]]});
     return emitter;
   }
 
@@ -90,4 +114,4 @@ export function registerGui(appData
   else {
     Console.Warn("Please include da, truet.gui into your webpage: https://cdnjs.cloudflare.com/ajax/lib, trues/dat-gui/0.6.5/dat.gui.min.js");
   }
-}
+};

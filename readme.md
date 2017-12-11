@@ -7,6 +7,7 @@
 - [X] Write volumetric shader.
 - [ ] Volumetric frustrum culling
 - [X] Camera control should provide a control object and event sysyem
+- [ ] Add slice rendering alongside nearest neighbor and linear interpolation
 - [ ] Option to change background color
 - [ ] Camera Control should log its state as an URL, which would provide the possibility to share user views.
 - [ ] Window scale responsivness.

@@ -1,3 +1,7 @@
+#define NO_INTERPOLATION 0
+#define NEAREST_NEIGHBOUR_INTERPOLATION 1
+#define LINEAR_INTERPOLATION 2
+
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 volumeScaleMatrix;
@@ -6,7 +10,7 @@ uniform vec3 v;
 uniform sampler2D volTexture;
 uniform float sliceDistance;
 uniform float ambient;
-uniform bool zInterpolation;
+uniform int interpolation;
 uniform vec3 rayV;
 uniform vec3 rayVn;
 uniform float maxTraceLength;
@@ -48,6 +52,19 @@ vec4 rayCast(vec3 P_r) {
            || any(lessThan(D_r, userBotBound)))
       continue;
     float D_rz = D_r.z * zMax;
+
+    if (interpolation == NO_INTERPOLATION) {
+      // only sample the slice if it is the ray proximity
+      if (fract(D_rz) < debug1) {
+        uv = vec2(D_r.x
+                  , sliceUvRatio * (D_r.y + floor(D_rz)));
+        sColor += texture2D(volTexture, uv);
+        fColor += sColor / maxTraceLength * ambient;
+
+      }
+      continue;
+    }
+
     // Calculate slice interpolation factor
     float f_i = abs(fract(D_rz));
     uv = vec2(D_r.x
@@ -55,7 +72,9 @@ vec4 rayCast(vec3 P_r) {
     sColor +=
       texture2D(volTexture, uv)
       * (1.0 - f_i);
-    if (zInterpolation) {
+
+    // otherwise it will be a simple nearest neighbour;
+    if (interpolation == LINEAR_INTERPOLATION) {
       float farZ = ceil(D_rz);
       if (farZ > zMax
           || farZ < 0.0)
