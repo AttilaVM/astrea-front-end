@@ -1,17 +1,4 @@
-/**
- * Extract image data (x and y scale and RGBA data) from a given image DOM node.
- * @param {HTMLElement} img
- * @return {{width: number, height: number, data:
-Uint8ClampedArray}}
- */
-function getImgData(img) {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  canvas.width = img.width;
-  canvas.height = img.height;
-  ctx.drawImage(img, 0, 0);
-  return ctx.getImageData(0, 0, img.width, img.height);
-}
+import { getImgData } from "./image-utils";
 
 /**
  * Generalized async data loader, which accepts arbitrary number of urls pointing to files relative to the server root and returns their content as resolveable arguments of an array of promises.

@@ -238,12 +238,8 @@ export function initCellvis(containerElem
   };
 }
 
-export function destructCellvis() {
-
-}
-
 let teardownFun;
-export function cellvisCtrl(id) {
+export function cellvisCtrl(appContainer, id) {
   if (teardownFun)
     teardownFun();
 
@@ -255,9 +251,8 @@ export function cellvisCtrl(id) {
         const [sampleData
                , vertexShader
                , fragmentShader] = values;
-        const containerElem = document.getElementById("canvas_container");
         teardownFun = initCellvis(
-          containerElem
+          appContainer
           , sampleData.voxelSrc
           , sampleData.scale
           , sampleData.zScaler

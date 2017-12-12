@@ -24,7 +24,10 @@ function Emitter() {
 Object.assign(Emitter.prototype, EventDispatcher.prototype);
 
 function deconstructUrl(url) {
-  let fragment = url.substring(url.indexOf('#') + 1);
+  const fragmentStart = url.indexOf('#') + 1;
+  if (fragmentStart == 0)
+    return URL_DEFAULTS;
+  let fragment = url.substring(fragmentStart);
   const urlData = [];
   let fieldBuffer = [];
   for (let i = 0; i < fragment.length; i++) {
@@ -44,7 +47,7 @@ function deconstructUrl(url) {
   return urlData;
 }
 
-export function urlNav() {
+export function registerUrlNavigation() {
   const emitter = new Emitter();
   const urlData = {};
   function urlHandler() {
