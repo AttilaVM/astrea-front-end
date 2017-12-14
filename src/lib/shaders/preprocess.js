@@ -17,6 +17,12 @@ export function maxTraceLength(rayV, voxelDimensions) {
           + abs(kHat.dot(rayV)) * voxelDimensions[2]) / 3;
 }
 
+export function raydzDistortionCorrection(ray, zScaler) {
+  ray.x *= zScaler;
+  ray.y *= zScaler;
+  return ray;
+}
+
 // per scene
 
 export function calcVolumeScale(voxelDimensions, zScaler) {

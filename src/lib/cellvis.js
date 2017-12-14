@@ -32,7 +32,7 @@ import { registerTrackballControl } from "./control/trackball";
 import { registerOrthoControls } from "./control/ortho";
 import { registerGui, optionMap } from "./gui";
 import { cuboidNormalizer } from "./math/geo";
-import { maxTraceLength, calcVolumeScale, clampToMaxSize } from "./shaders/preprocess.js";
+import { maxTraceLength, calcVolumeScale, clampToMaxSize, raydzDistortionCorrection } from "./shaders/preprocess.js";
 
 // state
 const textureLoader = new TextureLoader();
@@ -107,6 +107,14 @@ export function initCellvis(containerElem
 
   const viewBoxGeo = new BoxBufferGeometry(2, 2, 2);
 
+  const rayVn = new Vector3()
+        .copy(camera.position)
+        .normalize()
+        .negate();
+  // correct
+  rayVn.x *= zScaler;
+  rayVn.y *= zScaler;
+
   const uniforms = {
     voxelSize: {value: 1.0}
     , debug1: {value: appData.debug1}
@@ -133,12 +141,8 @@ export function initCellvis(containerElem
     , rayV: {type: "3fv", value:
              new Vector3()
              .copy(camera.position)}
-    , rayVn: {type: "3fv", value:
-              new Vector3()
-              .copy(camera.position)
-              .normalize()
-              .negate()
-             }
+    , rayVn: {type: "3fv", value: rayVn}
+
     , maxTraceLength: {value: voxelDimensions[2]}
     , v: {type: "3fv", value: new Vector3(
       voxelDimensions[0]
@@ -226,10 +230,11 @@ export function initCellvis(containerElem
 
   camCtrlEmitter.addEventListener("rotate", function (e) {
     uniforms.rayV.value = camera.position; //e.sphericalPosition;
-    uniforms.rayVn.value =
+    uniforms.rayVn.value = raydzDistortionCorrection(
       e.sphericalPosition
-      .normalize()
-      .negate();
+        .normalize()
+        .negate()
+      , zScaler);
 
     uniforms.maxTraceLength.value = maxTraceLength(camera.position, voxelDimensions);
 

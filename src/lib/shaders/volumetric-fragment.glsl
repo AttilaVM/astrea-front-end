@@ -55,7 +55,7 @@ vec4 rayCast(vec3 P_r) {
 
     if (interpolation == NO_INTERPOLATION) {
       // only sample the slice if it is the ray proximity
-      if (fract(D_rz) < debug1) {
+      if (fract(D_rz) < 1.0) {
         uv = vec2(D_r.x
                   , sliceUvRatio * (D_r.y + floor(D_rz)));
         sColor += texture2D(volTexture, uv);
