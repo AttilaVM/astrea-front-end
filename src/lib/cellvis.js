@@ -17,7 +17,7 @@ import
   , VertexColors
   , DoubleSide
   , CustomBlending
-  , ImageUtils
+  , TextureLoader
   , ShaderMaterial
   , Mesh
   , NearestFilter
@@ -32,17 +32,22 @@ import { registerTrackballControl } from "./control/trackball";
 import { registerOrthoControls } from "./control/ortho";
 import { registerGui, optionMap } from "./gui";
 import { cuboidNormalizer } from "./math/geo";
-import { maxTraceLength, calcVolumeScale } from "./shaders/preprocess.js";
+import { maxTraceLength, calcVolumeScale, clampToMaxSize } from "./shaders/preprocess.js";
 
 // state
-
+const textureLoader = new TextureLoader();
 export function initCellvis(containerElem
-                            , voxelSrcUrl
-                            , voxelDimensions
-                            , zScaler
-                            , metaData
+                            , voxelData
                             , vertexShader
                             , fragmentShader) {
+  appDispatcher.renderStart();
+  // Extract voxel data
+  const voxelSrc = voxelData.voxelSrc;
+  const voxelDimensions = voxelData.scale;
+  const zScaler = voxelData.zScaler;
+  const metaData = voxelData.metaData;
+
+
   function AppData() {
     // Development sate
     this.debug1 = 1;
@@ -62,16 +67,25 @@ export function initCellvis(containerElem
   }
   let appData = new AppData();
 
+
   let canvasWidth = containerElem.offsetWidth;
   let canvasHeight = containerElem.offsetHeight;
   let canvasRatio = canvasWidth / canvasHeight;
   // Basic scene setup
-  const scene = new Scene();
-  scene.background = new Color(appData.bgColor);
   const renderer = new WebGLRenderer();
+
+  let volTexture;
+  if (typeof(voxelSrc) === "string")
+    volTexture = textureLoader.load(voxelSrc);
+
+  volTexture.minFilter = NearestFilter;
+
   renderer.setSize(canvasWidth, canvasHeight);
   /// Adapt to displays with different pixel densities
   renderer.setPixelRatio(devicePixelRatio);
+
+  const scene = new Scene();
+  scene.background = new Color(appData.bgColor);
   /// Append canvas
   containerElem.appendChild(renderer.domElement);
   const axes = new AxisHelper(20);
@@ -90,12 +104,9 @@ export function initCellvis(containerElem
   camera.position.x = 0;
   camera.position.y = 0;
   camera.position.z = 5;
-  // camera.rotation.x += Math.PI;
-  // camera.rotation.y += Math.PI;
 
   const viewBoxGeo = new BoxBufferGeometry(2, 2, 2);
-  const volTexture = ImageUtils.loadTexture(voxelSrcUrl);
-  volTexture.minFilter = NearestFilter;
+
   const uniforms = {
     voxelSize: {value: 1.0}
     , debug1: {value: appData.debug1}
@@ -232,34 +243,17 @@ export function initCellvis(containerElem
     render();
   });
 
+  appDispatcher.addEventListener(
+    "downScale"
+    , (voxelDimensions) => uniforms.v = new Vector3(
+      voxelDimensions[0]
+      , voxelDimensions[1]
+      , voxelDimensions[2]
+    ) );
+
   return function teardown() {
     containerElem.removeChild(renderer.domElement);
     guiEmitter.teardownGui();
+    appDispatcher.renderStop();
   };
-}
-
-let teardownFun;
-export function cellvisCtrl(appContainer, id) {
-  if (teardownFun)
-    teardownFun();
-
-  let imgData = fetchFiles(
-    id + ".json"
-    , "shaders/volumetric-vertex.glsl"
-    , "shaders/volumetric-fragment.glsl")
-      .then((values) => {
-        const [sampleData
-               , vertexShader
-               , fragmentShader] = values;
-        teardownFun = initCellvis(
-          appContainer
-          , sampleData.voxelSrc
-          , sampleData.scale
-          , sampleData.zScaler
-          , sampleData.metaData
-          , vertexShader
-          , fragmentShader);
-      }).catch((err) => {
-        console.error(err);
-      });
 }

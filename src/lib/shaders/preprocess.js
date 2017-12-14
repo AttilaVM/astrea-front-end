@@ -1,5 +1,5 @@
 // contains functions for one calcuation per frame or scene cases.
-import { Vector3, Matrix4 } from "three";
+import { Vector3, Matrix4, WebGLRenderer } from "three";
 import { cuboidNormalizer } from "../math/geo";
 
 const uHat = new Vector3(1, 0, 0);
@@ -26,5 +26,27 @@ export function calcVolumeScale(voxelDimensions, zScaler) {
     0.0, volumeScale[1], 0.0, 0.0,
     0.0, 0.0, volumeScale[2] * zScaler, 0.0,
     0.0, 0.0, 0.0, 1.0);
+
+}
+
+// TODO Ask to Three.js developers to expose thei clamipng function.
+export function clampToMaxSize( voxelDimensions, zScaler) {
+  const renderer = new WebGLRenderer();
+  const maxSize = renderer.capabilities.maxTextureSize;
+
+  const imgWidht = voxelDimensions[0];
+  const imgHeight = voxelDimensions[1] * voxelDimensions[2];
+
+  let changed = false;
+  if ( imgWidht > maxSize || imgHeight > maxSize ) {
+    changed = true;
+    const scale = maxSize / Math.max( imgWidht, imgHeight );
+    voxelDimensions[0] = Math.floor( voxelDimensions[0] * scale );
+    voxelDimensions[1] = Math.floor( voxelDimensions[1] * scale );
+    zScaler = scale * zScaler;
+  }
+  return {voxelDimensions: voxelDimensions
+          , zScaler: zScaler
+          , changed: changed};
 
 }

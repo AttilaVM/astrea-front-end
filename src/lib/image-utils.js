@@ -1,4 +1,5 @@
-import { Observable } from 'rxjs-es';
+import { Observable } from "rxjs-es";
+import { any, equals } from "ramda";
 
 function concatRgbaArr(a1, a2) {
   const a1End = a1.length;
@@ -23,23 +24,6 @@ export function getImgData(img) {
   return ctx.getImageData(0, 0, img.width, img.height);
 }
 
-export function getImgDataFromFile(file) {
-  const img = document.createElement("img");
-  img.file = file;
-  img.src = window.URL.createObjectURL(file);
-  const promise = new Promise((resolve, reject) => {
-    img.onload = function(e) {
-      const imgData = getImgData(img);
-      window.URL.revokeObjectURL(this.src);
-      resolve(imgData);
-    };
-    img.onerror = function (err) {
-      reject(err);
-    };
-  });
-  return promise;
-}
-
 export function loadImg(file){
   const img = document.createElement("img");
   img.file = file;
@@ -55,23 +39,6 @@ export function loadImg(file){
   });
   img.src = window.URL.createObjectURL(file);
   return observable;
-}
-
-export function imgClientLink(files) {
-  const fileNum = files.length;
-  if (fileNum == 0) {
-    return;
-  }
-  const imgDataPromises = [];
-  for (let i = 0; i < fileNum; i++) {
-    let file = files[i];
-    if (file.type.indexOf("image") == -1) {
-      console.error(`Skipping: ${file.name} is not an image.`);
-      continue;
-    }
-    imgDataPromises[i] = getImgDataFromFile(file);
-  }
-  return Promise.all(imgDataPromises);
 }
 
 export function sliceValidator(originalSlice, slice) {
@@ -93,3 +60,19 @@ export function verticalImgConcat(montageData, imgData) {
   concatRgbaArr(montageData.data, imgData.data);
   return montageData;
 };
+
+const supportedExtensions =
+      ["png"
+       ,"tif"
+       ,"tiff"];
+export function isSupportedImg(path) {
+  const fileExtension =
+        path.substring(
+          path.lastIndexOf(".") + 1)
+        .toLowerCase();
+  return any(equals(fileExtension), supportedExtensions);
+
+
+
+
+}

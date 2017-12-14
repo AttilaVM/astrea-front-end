@@ -1,24 +1,35 @@
+import { AppDispatcher } from "./lib/app-dispatcher.js";
 import { registerUrlNavigation } from "./lib/url_nav";
-import { cellvisCtrl } from "./lib/cellvis";
-import { mainUi } from "./lib/main-ui";
+import { getRenderCtrl } from "./lib/controllers/render-ctrl.js";
+import { addImgLoaderBtn } from "./lib/main-ui";
+import { addShowcase } from "./lib/components/showcase";
+import { staticFetcher } from "./lib/services/fetchers.js";
 
 export function appStart(appContainer, serverAddr) {
-  if (serverAddr) {
-    // dinamic page
-  }
-  else {
-    const navCtrl = registerUrlNavigation();
+  // Add application level event dispatcher to the global scope
+  window.appDispatcher = new AppDispatcher();
 
-    const initialData = navCtrl.initialData.data;
-    if (initialData)
-      cellvisCtrl(appContainer, initialData);
-    else
-      mainUi(appContainer);
+  // Instanciate GUI elements
+  const showcase = addShowcase();
+  const imgLoaderBtn = addImgLoaderBtn();
 
-    navCtrl.addEventListener("urlcmd", function (e) {
+  // Create render Controler
+  const renderCtrl = getRenderCtrl(appContainer);
+
+  // Add top-level event listeners
+  appDispatcher.addEventListener(
+    "urlcmd"
+    , e => {
       if (e.name == "data")
         if (e.value)
-          cellvisCtrl(appContainer, e.value);
-    });
-  }
+          renderCtrl(e.value);
+    } );
+  appDispatcher.addEventListener("voxeldataload", console.log);
+
+  // Register services
+  registerUrlNavigation();
+
+  // Populate the browser DOM
+  showcase.appendChild(imgLoaderBtn);
+  appContainer.appendChild(showcase);
 }

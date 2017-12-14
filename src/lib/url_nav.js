@@ -14,20 +14,11 @@ const URL_DEFAULTS = [""
                       , 0
                       , 1];
 
-function Emitter() {
-  this.urlCmd = function cmd(name, value) {
-    this.dispatchEvent({type: "urlcmd"
-                        , name: name
-                        , value: value});
-  };
-}
-Object.assign(Emitter.prototype, EventDispatcher.prototype);
-
 function deconstructUrl(url) {
-  const fragmentStart = url.indexOf('#') + 1;
-  if (fragmentStart == 0)
+  const fragmentStart = url.indexOf('#');
+  if (fragmentStart == -1)
     return URL_DEFAULTS;
-  let fragment = url.substring(fragmentStart);
+  let fragment = url.substring(fragmentStart + 1);
   const urlData = [];
   let fieldBuffer = [];
   for (let i = 0; i < fragment.length; i++) {
@@ -47,8 +38,11 @@ function deconstructUrl(url) {
   return urlData;
 }
 
+/**
+ * Register an URL change to command event translator.
+ * @return {?object} Initial command from page-onload URL fragment
+ */
 export function registerUrlNavigation() {
-  const emitter = new Emitter();
   const urlData = {};
   function urlHandler() {
     let urlDataSeq = deconstructUrl(window.location.href);
@@ -57,12 +51,12 @@ export function registerUrlNavigation() {
       let value = urlDataSeq[i] || URL_DEFAULTS[i];
       if (urlData[name] != value) {
         urlData[name] = value;
-        emitter.urlCmd(name, value);
+        appDispatcher.urlCmd(name, value);
       }
     }
     return urlData;
   }
   window.addEventListener("popstate", urlHandler);
-  emitter.initialData = urlHandler();
-  return emitter;
+
+  urlHandler();
 }
