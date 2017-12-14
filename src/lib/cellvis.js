@@ -18,6 +18,7 @@ import
   , DoubleSide
   , CustomBlending
   , TextureLoader
+  , CanvasTexture
   , ShaderMaterial
   , Mesh
   , NearestFilter
@@ -25,6 +26,7 @@ import
 // internal
 import { VoxelGenerator } from "./processing/stack-processing.js";
 import { fetchFiles } from "./image_loader";
+import { imgDataToCanvas } from "./image-utils.js";
 import { scaleInCubeScaler } from "./geometry-utils";
 import { buildParticleSystem } from "./build/particle-system";
 import { buildVoxelBox } from "./build/voxel-box";
@@ -42,11 +44,30 @@ export function initCellvis(containerElem
                             , fragmentShader) {
   appDispatcher.renderStart();
   // Extract voxel data
-  const voxelSrc = voxelData.voxelSrc;
-  const voxelDimensions = voxelData.scale;
-  const zScaler = voxelData.zScaler;
-  const metaData = voxelData.metaData;
+  let voxelSrc ;
+  let voxelDimensions;
+  let zScaler;
+  let metaData ;
 
+  if (voxelData.voxelSrc) {
+  voxelSrc = voxelData.voxelSrc;
+  voxelDimensions = voxelData.scale;
+  zScaler = voxelData.zScaler;
+  metaData = voxelData.metaData;
+  }
+  else if (voxelData.data) {
+    console.log(voxelData);
+    voxelSrc = voxelData;
+    voxelDimensions = [
+      voxelData.width
+      , voxelData.height / voxelData.sliceNum
+      , voxelData.sliceNum
+    ];
+    zScaler = 1;
+    metaData = null;
+  }
+
+  console.log("voxelDimensions", voxelDimensions);
 
   function AppData() {
     // Development sate
@@ -77,6 +98,8 @@ export function initCellvis(containerElem
   let volTexture;
   if (typeof(voxelSrc) === "string")
     volTexture = textureLoader.load(voxelSrc);
+  else
+    volTexture = new CanvasTexture(imgDataToCanvas(voxelSrc));
 
   volTexture.minFilter = NearestFilter;
 
@@ -227,6 +250,9 @@ export function initCellvis(containerElem
     , renderer.domElement
     , 1
     , 5);
+
+  if (voxelSrc.data)
+    render();
 
   camCtrlEmitter.addEventListener("rotate", function (e) {
     uniforms.rayV.value = camera.position; //e.sphericalPosition;

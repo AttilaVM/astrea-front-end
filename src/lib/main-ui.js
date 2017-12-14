@@ -25,7 +25,8 @@ export function addImgLoaderBtn() {
               , undefined)
         .reduce((montageImgData, imgData) =>
                 verticalImgConcat(montageImgData, imgData)
-                , {data: new Uint8ClampedArray()
+                  // Uint8clampedarray has an immutable length
+                , {data: []
                    , width: undefined
                    , height: 0
                    , sliceNum: 0})

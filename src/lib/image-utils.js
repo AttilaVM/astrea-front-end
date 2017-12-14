@@ -71,8 +71,18 @@ export function isSupportedImg(path) {
           path.lastIndexOf(".") + 1)
         .toLowerCase();
   return any(equals(fileExtension), supportedExtensions);
+}
 
-
-
-
+export function imgDataToCanvas(voxelData) {
+  const canvas = document.createElement("canvas");
+  const imgData = new ImageData(
+    new Uint8ClampedArray(voxelData.data)
+    , voxelData.width
+    , voxelData.height);
+  // Maybe this part is not obligatory TODO
+  canvas.width = imgData.width;
+  canvas.height = imgData.height;
+  const ctx = canvas.getContext("2d");
+  ctx.putImageData(imgData, 0, 0);
+  return canvas;
 }
