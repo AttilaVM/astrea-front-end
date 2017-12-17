@@ -1,5 +1,12 @@
 import { addAttrs, createElement } from "./dom-utils";
-import { loadImg, getImgData, sliceValidator, imgClientLink, getImgDataFromFile, verticalImgConcat } from "./image-utils";
+import { loadImg
+         , getImgData
+         , sliceValidator
+         , imgClientLink
+         , getImgDataFromFile
+         , verticalImgConcat
+         , imgDataToCanvas
+       } from "./image-utils";
 
 import { Observable } from 'rxjs-es';
 
@@ -30,8 +37,13 @@ export function addImgLoaderBtn() {
                    , width: undefined
                    , height: 0
                    , sliceNum: 0})
-        .subscribe(montageImgData =>
-                   appDispatcher.voxelDataLoad(montageImgData)));
+        .subscribe(montageImgData => {
+          const volCanvas = imgDataToCanvas(montageImgData);
+          volCanvas.sliceNum = montageImgData.sliceNum;
+          appDispatcher.voxelDataLoad(volCanvas);
+        })
+    );
+
 
   console.info("You can upload image sequences with the plus icon");
 

@@ -3,6 +3,7 @@ import { registerUrlNavigation } from "./lib/url_nav";
 import { getRenderCtrl } from "./lib/controllers/render-ctrl.js";
 import { addImgLoaderBtn } from "./lib/main-ui";
 import { addMontageDownloadBtn } from "./lib/components/montage-downloat-btn.js";
+import { addNotifyer } from "./lib/components/notifyer.js";
 import { addShowcase } from "./lib/components/showcase";
 import { staticFetcher } from "./lib/services/fetchers.js";
 
@@ -14,6 +15,7 @@ export function appStart(appContainer, serverAddr) {
   const showcase = addShowcase();
   const imgLoaderBtn = addImgLoaderBtn();
   const montageDownloadBtn = addMontageDownloadBtn();
+  const notifyerArea = addNotifyer();
 
   // Create render Controler
   const renderCtrl = getRenderCtrl(appContainer);
@@ -28,7 +30,7 @@ export function appStart(appContainer, serverAddr) {
     } );
   appDispatcher.addEventListener(
     "voxeldataload"
-    , (e) => renderCtrl(e)
+    , (e) => renderCtrl(e.volCanvas)
   );
 
 
@@ -39,4 +41,5 @@ export function appStart(appContainer, serverAddr) {
   showcase.appendChild(imgLoaderBtn);
   showcase.appendChild(montageDownloadBtn);
   appContainer.appendChild(showcase);
+  appContainer.appendChild(notifyerArea);
 }

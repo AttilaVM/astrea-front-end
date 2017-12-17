@@ -7,10 +7,17 @@ export function addAttrs(elem, attrObj) {
   return elem;
 }
 
-export function createElement(elemName, attrObj) {
+export function addClasses(elem, classList) {
+  for (let className of classList)
+    elem.classList.add(className);
+  return elem;
+}
+
+export function createElement(elemName, attrObj, classList) {
   const elem = document.createElement(elemName);
   if (attrObj)
-    return addAttrs(elem, attrObj);
-  else
-    return elem;
+    addAttrs(elem, attrObj);
+  if (classList)
+    addClasses(elem, classList);
+  return elem;
 }

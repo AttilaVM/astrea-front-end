@@ -55,7 +55,7 @@ export function initCellvis(containerElem
   zScaler = voxelData.zScaler;
   metaData = voxelData.metaData;
   }
-  else if (voxelData.data) {
+  else {
     console.log(voxelData);
     voxelSrc = voxelData;
     voxelDimensions = [
@@ -85,6 +85,7 @@ export function initCellvis(containerElem
     this.endSliceY = voxelDimensions[1];
     this.begSliceZ = 0;
     this.endSliceZ = voxelDimensions[2];
+    this.sampleName = "";
   }
   let appData = new AppData();
 
@@ -96,12 +97,15 @@ export function initCellvis(containerElem
   const renderer = new WebGLRenderer();
 
   let volTexture;
-  if (typeof(voxelSrc) === "string")
+  if (typeof(voxelSrc) === "string") {
     volTexture = textureLoader.load(voxelSrc);
-  else
-    volTexture = new CanvasTexture(imgDataToCanvas(voxelSrc));
-
+  }
+  else {
+    appData.volCanvas = voxelSrc;
+    volTexture = new CanvasTexture(voxelSrc);
+  }
   volTexture.minFilter = NearestFilter;
+
 
   renderer.setSize(canvasWidth, canvasHeight);
   /// Adapt to displays with different pixel densities
@@ -216,7 +220,14 @@ export function initCellvis(containerElem
   function render() {
     renderer.render(scene, camera);
   }
-  volTexture.image.onload = render;
+  volTexture.image.onload = () => {
+    appData.volCanvas = volTexture;
+    render();
+  };
+
+  if (typeof(voxelSrc) !== "string")
+    render();
+
 
   const guiEmitter = registerGui(
     appData

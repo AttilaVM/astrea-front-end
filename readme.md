@@ -9,7 +9,12 @@
 - [X] Add slice rendering alongside nearest neighbor and linear interpolation
 - [ ] Webgl limits texture size by its highest dimmension. So I must write a rectangular montage instead of a vertical one.
 - [ ] Option to change background color
-- [ ] Camera Control should log its state as an URL, which would provide the possibility to share user views.
+- [X] add gui folders/categories
+  - example: https://workshop.chromeexperiments.com/examples/gui/#3--Folders
+- [ ] Camera Control should log its state as an URL, which would provide the possibility to share user views, and as dat.gui state als to save different views between sessions.
+  - example: https://workshop.chromeexperiments.com/examples/gui/#5--Saving-Values
+  - example: https://workshop.chromeexperiments.com/examples/gui/#9--Updating-the-Display-Automatically
+- [ ] Make gui not selectable while moving camera, to avoid accidental gui element selection.
 - [ ] Window scale responsivness.
 - [ ] Separate Orthographics Camera Control to its own module
 - [ ] Camera view slicer
