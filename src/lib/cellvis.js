@@ -94,7 +94,10 @@ export function initCellvis(containerElem
   let canvasHeight = containerElem.offsetHeight;
   let canvasRatio = canvasWidth / canvasHeight;
   // Basic scene setup
-  const renderer = new WebGLRenderer();
+  // Drawing buffer must be preserved for screen-shot functionality
+  const renderer = new WebGLRenderer({
+                    preserveDrawingBuffer: true
+                });
 
   let volTexture;
   if (typeof(voxelSrc) === "string") {
@@ -232,7 +235,9 @@ export function initCellvis(containerElem
   const guiEmitter = registerGui(
     appData
     , voxelDimensions
-    , render);
+    , render
+    , renderer
+  );
   guiEmitter.addEventListener("change", function (e) {
     // special cases
     if (e.name == "zScaler") {

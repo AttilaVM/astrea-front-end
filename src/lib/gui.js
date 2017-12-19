@@ -1,5 +1,6 @@
 import { EventDispatcher } from "three";
 import { camelCaseToWords } from "./utils/text.js";
+import { screenShot, uploadSample } from "./gui/handlers.js";
 
 const optionDict = {
   interpolation: {none: 0
@@ -12,7 +13,9 @@ export function optionMap(name, value) {
 
 export function registerGui(appData
                             , voxelDimensions
-                            , render) {
+                            , render
+                            , renderer
+                           ) {
 
   function Emitter() {
     this.change = function change(name, value, uniformP, transformFun) {
@@ -151,38 +154,23 @@ export function registerGui(appData
         appDispatcher.userError("Sample name is not specified");
         return;
       }
-      appData.volCanvas.toBlob((blob) => {
-        // The blob must be in an array
-        const voxelImg = new File(
-          [blob]
-          , appData.sampleName + ".png"
-          , {type: blob.type});
-        const appDataFile = new File(
-          [JSON.stringify(appData)]
-          , "voxelData"
-          , {type: "application/json"}
-        );
-        console.log(appDataFile);
-        const formData = new FormData();
-        formData.append("voxel_img", voxelImg, voxelImg.name);
-        formData.append("app_data", appDataFile);
-        console.log(formData);
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST'
-                 , voxelImg.name
-                 , true);
-        console.log(xhr);
-        xhr.onload = () => {
-          appDispatcher.upload(xhr.status);
-        };
-        xhr.onerror = () => {
-          appDispatcher.upload(xhr.status);
-        }
-        xhr.send(formData);
-      })
+      const volImgProm = new Promise((resolve, reject) => {
+        appData.volCanvas.toBlob((blob) => {
+          resolve(blob);
+          reject("Failed to convert canvas to blob");
+        });
+      });
+      const screenShotProm = new Promise((resolve, reject) => {
+        renderer.domElement.toBlob((blob) => {
+          resolve(blob);
+          reject("Screen shot failed");
+        });
+      });
 
-      ;
-
+      Promise.all([volImgProm, screenShotProm])
+        .then((blobs) => {
+          uploadSample(appData, blobs[0], blobs[1]);
+        });
     }
 
     gui.add({Save: saveToBackEnd}, "Save");
