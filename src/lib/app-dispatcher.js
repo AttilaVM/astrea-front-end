@@ -23,6 +23,10 @@ export class AppDispatcher extends EventDispatcher {
        , volCanvas: voxelData});
   }
 
+  download(data) {
+    this.dispatchEvent({type: "download", data: data});
+  }
+
   renderStart() {
     this.dispatchEvent({type: "renderstart"});
   }

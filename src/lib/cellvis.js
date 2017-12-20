@@ -55,6 +55,13 @@ export function initCellvis(containerElem
   zScaler = voxelData.zScaler;
   metaData = voxelData.metaData;
   }
+  else if (voxelData.hasOwnProperty("sampleName")) {
+    voxelSrc = voxelData.sampleImgPath;
+    console.info(`WORKS!!!`, voxelSrc);
+    voxelDimensions = [voxelData.xScale, voxelData.yScale, voxelData.zScale];
+    zScaler = voxelData.zScaler;
+
+  }
   else {
     console.log(voxelData);
     voxelSrc = voxelData;
@@ -89,6 +96,7 @@ export function initCellvis(containerElem
   }
   let appData = new AppData();
 
+  appData.voxelDimensions = voxelDimensions;
 
   let canvasWidth = containerElem.offsetWidth;
   let canvasHeight = containerElem.offsetHeight;

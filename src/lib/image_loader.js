@@ -21,10 +21,15 @@ export function fetchFile(url, transformFun, isValid) {
   return promise;
 }
 
-export function fetchImg(url) {
+export function fetchImg(url, transformFun) {
   const img = new Img();
   promise = new Promise((resolve, reject) => {
-    img.onload = (event) => resolve(getImgData(img));
+      img.onload = () => {
+        if (transformFun)
+          resolve(transformFun(img));
+        else
+          resolve(img);
+      };
     img.onerror = (err) =>  reject(err);
   });
   img.src = url;
@@ -43,7 +48,7 @@ export function fetchFiles(pathArr) {
   for (var i = 0; i < pathArr.length; i++) {
     url = pathArr[i];
     if (isSupportedImg(url))
-      promises[i] = fetchImg(url);
+      promises[i] = fetchImg(url, getImgData);
     else if (url.match(/.*\.json/i))
       promises[i] = fetchFile(url, JSON.parse);
     else

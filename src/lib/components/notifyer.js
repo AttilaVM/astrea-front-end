@@ -7,14 +7,14 @@ export function addNotifyer() {
   notifyer.appendChild(notification);
 
   appDispatcher.addEventListener("upload", (e) => {
-    if (e.statusCode === 200) {
+    if (e.statusCode === 201) {
       notifyer.classList.add("fade-in");
       notification.innerText = "Sample uploaded";
       setTimeout(
         () => notifyer.classList.remove("fade-in")
         , 2500);
     }
-    else {
+    else if (e.statusCode === 500){
       notifyer.classList.add("fade-in");
       notification.innerText = "Sample upload failed";
       setTimeout(

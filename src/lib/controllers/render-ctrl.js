@@ -16,6 +16,8 @@ export function getRenderCtrl(appContainer, serverAddr) {
     if (typeof(dataSrc) == "string")
       if (!serverAddr)
         sampleDataPromise = fetchFile(dataSrc + ".json", JSON.parse);
+    else if (dataSrc.hasOwnProperty("sampleName"))
+      console.info(dataSrc);
     // img data is alredy loaded, it will less uncanny after I fully switched to Observables
     else
       sampleDataPromise = new Promise(

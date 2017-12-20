@@ -32,6 +32,10 @@ export function appStart(appContainer, serverAddr) {
     "voxeldataload"
     , (e) => renderCtrl(e.volCanvas)
   );
+  appDispatcher.addEventListener(
+    "download"
+    , (e) => renderCtrl(e.data)
+  );
 
 
   // Register services
