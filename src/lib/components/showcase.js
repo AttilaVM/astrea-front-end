@@ -1,18 +1,51 @@
-import { createElement } from "../dom-utils";
+import { createElement, addParagraphs } from "../dom-utils";
 import { fetchFile } from "../image_loader.js";
 
 function addSampleCard(sampleName, thumbImgURL, data) {
   console.info(sampleName, thumbImgURL, data);
-  const cardDiv = createElement("div");
+
+  // Truncate modification date to minute precision assuming it is standard
+  const date = data.updatedAt.substr(
+    0
+    ,data.updatedAt.lastIndexOf(".")
+  );
+
+  const cardDiv = createElement(
+    "div"
+    , {draggable: "true"}
+    , ["cardLayout", "hCenter", "noShrink", "card"]
+  );
   const thumbImg = createElement(
     "img"
     , {
       src: thumbImgURL
-      , width: 300
-      , alt: sampleName});
-  cardDiv.appendChild(thumbImg);
+      , height: 185
+      , alt: sampleName
+    }
+    , ["thumbLayout"
+       , "clickable"
+       , "enlargeOnHover"
+       , "fadeBorderIn"
+      ]
+  );
 
-  cardDiv.addEventListener("mouseup", () => {
+  const infoBox = createElement(
+    "div"
+    , {}
+    , ["infoTextLayout", "infoText"]
+  );
+
+  addParagraphs(infoBox
+                , [  `${sampleName}`
+                   , `${date}`
+                   , `${data.xScale}:${data.yScale}:${data.zScale}`]
+                , {}
+                , ["cardText"]);
+
+  cardDiv.appendChild(thumbImg);
+  cardDiv.appendChild(infoBox);
+
+  thumbImg.addEventListener("mouseup", () => {
     console.log("UP");
     appDispatcher.download(data);
   });
@@ -21,7 +54,11 @@ function addSampleCard(sampleName, thumbImgURL, data) {
 }
 
 export function addShowcase() {
-  const showcase = createElement("div");
+  const showcase = createElement(
+    "div"
+    , {}
+    , ["row", "wrap", "cardContainer"]
+  );
 
   appDispatcher.addEventListener(
     "renderstart"

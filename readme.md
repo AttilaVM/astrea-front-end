@@ -11,6 +11,7 @@
 - [ ] Option to change background color
 - [X] add gui folders/categories
   - example: https://workshop.chromeexperiments.com/examples/gui/#3--Folders
+- [ ] connect to code climate
 - [ ] Camera Control should log its state as an URL, which would provide the possibility to share user views, and as dat.gui state als to save different views between sessions.
   - example: https://workshop.chromeexperiments.com/examples/gui/#5--Saving-Values
   - example: https://workshop.chromeexperiments.com/examples/gui/#9--Updating-the-Display-Automatically

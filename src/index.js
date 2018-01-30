@@ -24,10 +24,12 @@ export function appStart(appContainer, serverAddr) {
   appDispatcher.addEventListener(
     "urlcmd"
     , e => {
-      if (e.name == "data")
-        if (e.value)
+      if (e.name == "data") {
+        if (e.value) {
           renderCtrl(e.value);
-    } );
+        }
+      }
+    });
   appDispatcher.addEventListener(
     "voxeldataload"
     , (e) => renderCtrl(e.volCanvas)
@@ -43,7 +45,6 @@ export function appStart(appContainer, serverAddr) {
 
   // Populate the browser DOM
   showcase.appendChild(imgLoaderBtn);
-  showcase.appendChild(montageDownloadBtn);
   appContainer.appendChild(showcase);
   appContainer.appendChild(notifyerArea);
 }

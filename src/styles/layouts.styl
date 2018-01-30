@@ -1,0 +1,113 @@
+cardWidth = 250px
+cardHeight = cardWidth
+cardPadding = cardWidth / 25
+cardMargin = cardWidth / 5
+
+cardTextSize = cardHeight / 20
+notificationTextSize = 16px
+
+lineHeight = 1.4
+
+// Generic
+
+.hide
+  display: none
+
+.positionPivot
+  position: relative
+
+.hCenter
+  text-align: center
+
+.center
+  position: absolute
+  top: 50%
+  left: 50%
+  width: w = 150px
+  height: h = 80px
+  margin-left: -(w / 2)
+  margin-top: -(h / 2)
+
+.fill
+  width: 100%
+  height: 100%
+
+.fillParent
+  position: absolute
+  left: 0
+  top: 0
+  width: 100%
+  height: 100%
+
+.wrap
+  flex-wrap: wrap
+
+.row
+  display: flex
+  flex-direction: row
+
+.noShrink
+  flex-shrink: 0
+
+.zlv1
+  z-index: 100
+
+// specific
+html, body
+  height: 100%
+
+.cardContainer
+  margin-top: (cardWidth / 4)
+
+.cardLayout
+  width: cardWidth
+  height: cardHeight
+  margin: cardMargin
+  margin: cardPadding
+
+.thumbLayout
+  max-width: cardWidth
+  margin-top: cardPadding
+
+.cardTextLayout
+  font-size: cardTextSize
+  line-height: lineHeight
+
+.infoTextLayout
+  width: 100%
+  height: 50px
+  text-align: center
+  font-family: CMUConcrete-Bold
+
+.plusSignLayout
+  position absolute
+  top 0
+  left 0
+  width cardWidth
+  height cardHeight
+
+.notifyerLayout
+  position: absolute
+  top: 50%
+  left: 50%
+  width: 80%
+  text-align: center
+  transform: translate(-50%, -50%)
+
+.notifyerLayout>p
+  margin: 12px 0 12px 0
+  font-family: CMUConcrete-Bold
+  font-size: notificationTextSize
+
+
+// animations
+
+.enlargeOnHover
+  position: relative
+  transform: scale(1)
+  transition: transform 0.4s
+  transition-timing-function: ease-in-out
+
+.enlargeOnHover:hover
+  transform: scale(1.6)
+  z-index: 200 !important
