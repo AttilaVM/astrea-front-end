@@ -1,5 +1,5 @@
-import { createElement } from "../dom-utils";
-import { imgDataToCanvas } from "../image-utils.js";
+import { createElement } from "/lib/utils/dom.js";
+import { imgDataToCanvas } from "/lib/utils/image.js";
 
 export function addMontageDownloadBtn() {
   const montageDownloadBtn = createElement("a");

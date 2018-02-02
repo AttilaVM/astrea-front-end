@@ -1,4 +1,5 @@
 import babel from "rollup-plugin-babel";
+import rootImport from 'rollup-plugin-root-import';
 import resolve from "rollup-plugin-node-resolve";
 const commonjs = require('rollup-plugin-commonjs');
 import eslint from "rollup-plugin-eslint";
@@ -38,6 +39,11 @@ export default {
     , babel({ babelrc: false
               , presets: ['es2015-rollup']
        , exclude: "node_modules/**"
+            })
+    , rootImport({
+      root: `${__dirname}/src`,
+      useEntry: 'prepend',
+      extensions: '.js'
     })
     // , commonjs({
     //   include: 'node_modules/**'

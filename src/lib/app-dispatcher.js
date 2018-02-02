@@ -1,5 +1,5 @@
 import { EventDispatcher } from "three";
-import { fetchFile } from "./image_loader.js";
+import { fetchFile } from "/lib/utils/fetch.js";
 
 export class AppDispatcher extends EventDispatcher {
   constructor() {

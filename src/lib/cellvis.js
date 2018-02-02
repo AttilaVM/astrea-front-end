@@ -4,7 +4,6 @@ import { apply
          , map
          , multiply
        } from "ramda";
-// import dat from "../../submodules/dat.gui/index";
 import
 { Scene
   , WebGLRenderer
@@ -24,17 +23,14 @@ import
   , NearestFilter
 } from "three";
 // internal
-import { VoxelGenerator } from "./processing/stack-processing.js";
-import { fetchFiles } from "./image_loader";
-import { imgDataToCanvas } from "./image-utils.js";
-import { scaleInCubeScaler } from "./geometry-utils";
-import { buildParticleSystem } from "./build/particle-system";
-import { buildVoxelBox } from "./build/voxel-box";
-import { registerTrackballControl } from "./control/trackball";
-import { registerOrthoControls } from "./control/ortho";
-import { registerGui, optionMap } from "./gui";
-import { cuboidNormalizer } from "./math/geo";
-import { maxTraceLength, calcVolumeScale, clampToMaxSize, raydzDistortionCorrection } from "./shaders/preprocess.js";
+import { fetchFiles } from "/lib/utils/fetch.js";
+import { imgDataToCanvas } from "/lib/utils/image.js";
+import { scaleInCubeScaler } from "/lib/utils/geometry.js";
+import { buildParticleSystem } from "/lib/build/particle-system.js";
+import { registerOrthoControls } from "/lib/camera/ortho.js";
+import { registerGui, optionMap } from "/lib/components/dat-gui.js";
+import { cuboidNormalizer } from "/lib/math/geo.js";
+import { maxTraceLength, calcVolumeScale, clampToMaxSize, raydzDistortionCorrection } from "/lib/shaders/preprocess.js";
 
 // state
 const textureLoader = new TextureLoader();

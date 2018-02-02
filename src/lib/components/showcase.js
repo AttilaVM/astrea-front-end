@@ -1,5 +1,5 @@
-import { createElement, addParagraphs } from "../dom-utils";
-import { fetchFile } from "../image_loader.js";
+import { createElement, addParagraphs } from "/lib/utils/dom.js";
+import { fetchFile } from "/lib/utils/fetch.js";
 
 function addSampleCard(sampleName, thumbImgURL, data) {
   console.info(sampleName, thumbImgURL, data);

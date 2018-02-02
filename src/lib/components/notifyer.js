@@ -1,4 +1,4 @@
-import { createElement } from "../dom-utils";
+import { createElement } from "/lib/utils/dom.js";
 
 export function addNotifyer() {
   const notifyer = createElement(

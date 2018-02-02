@@ -1,5 +1,5 @@
 // TODO maybe I should use observables instead of promises
-import { getImgData, isSupportedImg } from "./image-utils";
+import { getImgData, isSupportedImg } from "/lib/utils/image";
 
 export function fetchFile(url, transformFun, isValid) {
   const xhr = new XMLHttpRequest();

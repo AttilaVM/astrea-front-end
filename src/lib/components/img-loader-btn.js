@@ -1,5 +1,5 @@
-import { addAttrs, createElement, addVideo } from "./dom-utils";
-import { loadImg, getImgData, sliceValidator, imgClientLink, getImgDataFromFile, verticalImgConcat, imgDataToCanvas } from "./image-utils";
+import { addAttrs, createElement, addVideo } from "/lib/utils/dom.js";
+import { loadImg, getImgData, sliceValidator, verticalImgConcat, imgDataToCanvas } from "/lib/utils/image.js";
 
 import { Observable } from 'rxjs-es';
 

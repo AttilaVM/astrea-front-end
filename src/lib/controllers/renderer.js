@@ -1,10 +1,10 @@
-import { fetchFile } from "../image_loader.js";
-import { initCellvis } from "../cellvis";
-import { clampToMaxSize } from "../shaders/preprocess";
+import { fetchFile } from "/lib/utils/fetch.js";
+import { initCellvis } from "/lib/cellvis.js";
+import { clampToMaxSize } from "/lib/shaders/preprocess.js";
 
 
 let teardownFun;
-// TODO clean up this mess
+// TODO Make this function cleaner
 export function getRenderCtrl(appContainer, serverAddr) {
   return function (dataSrc) {
     // Tearodwn webgl-canvas, webgl-context and dat.gui

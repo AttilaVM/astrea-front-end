@@ -1,12 +1,3 @@
-export function screenShot(canvas) {
-  const a = document.createElement("a");
-  a.href = canvas.toDataURL();
-  window.addEventListener("mouseup", () => {
-    a.download = "screenshot";
-  });
-
-}
-
 export function uploadSample(appData, sampleBlob, screenShotBlob) {
   const sampleName = appData.sampleName;
   const sampleFileName = sampleName + ".png";

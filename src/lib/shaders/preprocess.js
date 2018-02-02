@@ -1,6 +1,6 @@
 // contains functions for one calcuation per frame or scene cases.
 import { Vector3, Matrix4, WebGLRenderer } from "three";
-import { cuboidNormalizer } from "../math/geo";
+import { cuboidNormalizer } from "/lib/math/geo.js";
 
 const uHat = new Vector3(1, 0, 0);
 const vHat = new Vector3(0, 1, 0);

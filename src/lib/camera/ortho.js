@@ -3,7 +3,7 @@ import {
   , Matrix4
   , Vector3
   , EventDispatcher } from "three";
-import { cartesianToPolar3 } from "../math/geo.js";
+import { cartesianToPolar3 } from "/lib/math/geo.js";
 
 const DEFUALT_SENSITIVITY = 0.01;
 const DEF_ROTATION_SENSITIVITY = 0.1;

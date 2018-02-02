@@ -28,6 +28,7 @@
     "rollup-plugin-commonjs": "^8.2.3",
     "rollup-plugin-eslint": "^4.0.0",
     "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-root-import": "^0.2.2",
     "rollup-plugin-uglify": "^2.0.1",
     "tern": "^0.21.0",
     "utils-merge": "^1.0.1",

@@ -1,6 +1,7 @@
 import { EventDispatcher } from "three";
-import { camelCaseToWords } from "./utils/text.js";
-import { screenShot, uploadSample } from "./gui/handlers.js";
+import { camelCaseToWords } from "/lib/utils/text.js";
+import { screenShot } from "/lib/utils/canvas.js";
+import { uploadSample } from "/lib/utils/http.js";
 
 const optionDict = {
   interpolation: {none: 0
