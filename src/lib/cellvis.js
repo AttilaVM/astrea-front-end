@@ -3,7 +3,9 @@ import {
   apply,
   reduce,
   map,
-  multiply
+  multiply,
+  divide,
+  __
 } from "ramda";
 import {
   Scene,
@@ -32,6 +34,8 @@ import { registerOrthoControls } from "/lib/camera/ortho.js";
 import { registerGui, optionMap } from "/lib/components/dat-gui.js";
 import { cuboidNormalizer } from "/lib/math/geo.js";
 import { maxTraceLength, calcVolumeScale, clampToMaxSize, raydzDistortionCorrection } from "/lib/shaders/preprocess.js";
+import { numToRgbArr } from "/lib/utils/color.js";
+
 
 // state
 const textureLoader = new TextureLoader();
@@ -81,7 +85,7 @@ export function initCellvis(
     this.debug200 = 200;
     // Production state
     this.zScaler = zScaler;
-    this.bgColor = 0x000000;
+    this.bgColor = 0x00000a;
     this.ambient = Math.E;
     this.interpolation = "linear";
     this.begSliceX = 0;
@@ -151,6 +155,10 @@ export function initCellvis(
   rayVn.x *= zScaler;
   rayVn.y *= zScaler;
 
+  const defaultBgColor =
+          map(divide(__, 256), numToRgbArr(appData.bgColor));
+
+
   const uniforms = {
     voxelSize: {value: 1.0},
     debug1: {value: appData.debug1},
@@ -184,6 +192,11 @@ export function initCellvis(
       voxelDimensions[0],
       voxelDimensions[1],
       voxelDimensions[2]
+    )},
+    bgColor: {type: "3fv", value: new Vector3(
+      defaultBgColor[0],
+      defaultBgColor[1],
+      defaultBgColor[2]
     )},
     volTexture: { type: "t", value: volTexture }
   };
@@ -254,6 +267,18 @@ export function initCellvis(
     }
     else if(e.name == "interpolation") {
       uniforms[e.name].value = optionMap(e.name, e.value);
+      render();
+      return;
+    }
+    else if(e.name == "bgColor") {
+      const normalizedColor =
+            map(divide(__, 256), numToRgbArr(e.value));
+      uniforms[e.name].value = new Vector3(
+        normalizedColor[0],
+        normalizedColor[1],
+        normalizedColor[2]
+      );
+      scene.background = new Color(e.value);
       render();
       return;
     }

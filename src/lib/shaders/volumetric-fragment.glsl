@@ -10,6 +10,7 @@ uniform vec3 v;
 uniform sampler2D volTexture;
 uniform float sliceDistance;
 uniform float ambient;
+uniform vec3 bgColor;
 uniform int interpolation;
 uniform vec3 rayV;
 uniform vec3 rayVn;
@@ -29,7 +30,7 @@ varying vec3 pos;
 
 vec4 rayCast(vec3 P_r) {
   vec2 uv;
-  vec4 fColor = vec4(0.0);
+  vec4 fColor = vec4(bgColor, 1.0);
   float zMax = v.z - 1.0;
   vec3 userTopBound =
     vec3(float(endSliceX)

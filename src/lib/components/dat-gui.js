@@ -100,7 +100,13 @@ export function registerGui(
       if (opts.colors)
         for (let opt of opts.colors) {
           let name = opt[0];
-          target.addColor(srcObj, name);
+          target.addColor(srcObj, name)
+            .onChange(function (value) {
+              emitter.change(name, value, true);
+            })
+            .onFinishChange(function (value) {
+              emitter.change(name, value, true);
+            });
         }
       if (opts.texts)
         for (let opt of opts.texts) {
