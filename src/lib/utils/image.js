@@ -28,10 +28,10 @@ export function loadImg(file){
   const img = document.createElement("img");
   img.file = file;
   const observable = Observable.create(function(observer){
-     img.onload = function(e) {
-       window.URL.revokeObjectURL(this.src);
-       observer.next(img);
-       observer.complete();
+    img.onload = function(e) {
+      window.URL.revokeObjectURL(this.src);
+      observer.next(img);
+      observer.complete();
     };
     img.onerror = function (err) {
       observer.error(err);
@@ -61,24 +61,26 @@ export function verticalImgConcat(montageData, imgData) {
   return montageData;
 };
 
-const supportedExtensions =
-      ["png"
-       ,"tif"
-       ,"tiff"];
+const supportedExtensions = [
+  "png",
+  "tif",
+  "tiff"
+];
 export function isSupportedImg(path) {
   const fileExtension =
         path.substring(
           path.lastIndexOf(".") + 1)
-        .toLowerCase();
+          .toLowerCase();
   return any(equals(fileExtension), supportedExtensions);
 }
 
 export function imgDataToCanvas(voxelData) {
   const canvas = document.createElement("canvas");
   const imgData = new ImageData(
-    new Uint8ClampedArray(voxelData.data)
-    , voxelData.width
-    , voxelData.height);
+    new Uint8ClampedArray(voxelData.data),
+    voxelData.width,
+    voxelData.height
+  );
   // Maybe this part is not obligatory TODO
   canvas.width = imgData.width;
   canvas.height = imgData.height;

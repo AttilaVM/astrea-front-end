@@ -51,8 +51,10 @@ export function clampToMaxSize( voxelDimensions, zScaler) {
     voxelDimensions[1] = Math.floor( voxelDimensions[1] * scale );
     zScaler = scale * zScaler;
   }
-  return {voxelDimensions: voxelDimensions
-          , zScaler: zScaler
-          , changed: changed};
+  return {
+    voxelDimensions: voxelDimensions,
+    zScaler: zScaler,
+    changed: changed
+  };
 
 }

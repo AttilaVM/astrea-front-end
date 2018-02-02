@@ -2,9 +2,9 @@ import { createElement } from "/lib/utils/dom.js";
 
 export function addNotifyer() {
   const notifyer = createElement(
-    "div"
-    , null
-    , ["notifyerLayout", "notifyer"]
+    "div",
+    null,
+    ["notifyerLayout", "notifyer"]
   );
   const notification = createElement("p");
 
@@ -21,8 +21,7 @@ export function addNotifyer() {
           notifyer.classList.remove("success");
         }
         , 2500);
-    }
-    else if (e.statusCode === 500){
+    } else if (e.statusCode === 500) {
       notifyer.classList.add("fadeIn");
       notifyer.classList.add("error");
       notification.innerText = "Sample upload failed";

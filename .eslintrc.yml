@@ -24,4 +24,4 @@ rules:
     - always
   comma-style:
     - 2
-    - first
+    - last

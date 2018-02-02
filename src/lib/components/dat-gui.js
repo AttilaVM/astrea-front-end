@@ -4,27 +4,31 @@ import { screenShot } from "/lib/utils/canvas.js";
 import { uploadSample } from "/lib/utils/http.js";
 
 const optionDict = {
-  interpolation: {none: 0
-                  , nearest_neighbour: 1
-                  , linear: 2}};
+  interpolation: {
+    none: 0,
+    nearest_neighbour: 1,
+    linear: 2}};
 
 export function optionMap(name, value) {
   return optionDict[name][value];
 }
 
-export function registerGui(appData
-                            , voxelDimensions
-                            , render
-                            , renderer
-                           ) {
+export function registerGui(
+  appData,
+  voxelDimensions,
+  render,
+  renderer
+) {
 
   function Emitter() {
     this.change = function change(name, value, uniformP, transformFun) {
-      this.dispatchEvent({type: "change"
-                          , name: name
-                          , value: value
-                          , uniformP
-                          , transformFun});
+      this.dispatchEvent({
+        type: "change",
+        name: name,
+        value: value,
+        uniformP,
+        transformFun
+      });
     };
   }
   Object.assign(Emitter.prototype, EventDispatcher.prototype);
@@ -46,38 +50,45 @@ export function registerGui(appData
       if (opts.numbers)
         for (let opt of opts.numbers) {
           let [
-            name
-            , start
-            , stop
-            , step
-            , uniformP
-            , transformFun] = opt;
+            name,
+            start,
+            stop,
+            step,
+            uniformP,
+            transformFun
+          ] = opt;
           target.add(
-            srcObj
-            , name
-            , start
-            , stop
-            , step)
+            srcObj,
+            name,
+            start,
+            stop,
+            step
+          )
             .name(camelCaseToWords(name))
             .onChange(function (value) {
-              emitter.change(name
-                             , value
-                             , uniformP
-                             , transformFun);
+              emitter.change(
+                name,
+                value,
+                uniformP,
+                transformFun
+              );
             })
             .onFinishChange(function (value) {
-              emitter.change(name
-                             , value
-                             , uniformP
-                             , transformFun);
+              emitter.change(
+                name,
+                value,
+                uniformP,
+                transformFun
+              );
             });
         }
       if (opts.booleans)
         for (let opt of opts.booleans) {
           let [name, uniformP] = opt;
           target.add(
-            srcObj
-            , name)
+            srcObj,
+            name
+          )
             .name(camelCaseToWords(name))
             .onChange(function (value) {
               emitter.change(name, value, uniformP);
@@ -108,16 +119,23 @@ export function registerGui(appData
     updateGui(
       {
         numbers: [
-          ["ambient", 1.0, 200.0, 0.01, true, Math.log]]
-        , colors: [["bgColor"]]
-        , texts: [[
-          "interpolation"
-          , ["none"
-             , "nearest_neighbour"
-             , "linear"]
-          , true]]}
-      , appData
-      , "scene"
+          [ "ambient",
+            1.0,
+            200.0,
+            0.01,
+            true,
+            Math.log]
+        ],
+        colors: [["bgColor"]],
+        texts: [[
+          "interpolation",
+          [ "none",
+            "nearest_neighbour",
+            "linear"
+          ],
+          true]]},
+      appData,
+      "scene"
     );
 
     gui.remember(appData);
@@ -125,27 +143,27 @@ export function registerGui(appData
     updateGui(
       {
         numbers: [
-          ["zScaler", 0.01, 50, 0.01, true]
-          , ["begSliceX", 0, voxelDimensions[0], 1, true]
-          , ["endSliceX", 1, voxelDimensions[0], 1, true]
-          , ["begSliceY", 0, voxelDimensions[1], 1, true]
-          , ["endSliceY", 1, voxelDimensions[1], 1, true]
-          , ["begSliceZ", 0, voxelDimensions[2], 1, true]
-          , ["endSliceZ", 1, voxelDimensions[2], 1, true]
-        ]}
-      , appData
-      , "geometry"
+          ["zScaler", 0.01, 50, 0.01, true],
+          ["begSliceX", 0, voxelDimensions[0], 1, true],
+          ["endSliceX", 1, voxelDimensions[0], 1, true],
+          ["begSliceY", 0, voxelDimensions[1], 1, true],
+          ["endSliceY", 1, voxelDimensions[1], 1, true],
+          ["begSliceZ", 0, voxelDimensions[2], 1, true],
+          ["endSliceZ", 1, voxelDimensions[2], 1, true]
+        ]},
+      appData,
+      "geometry"
     );
 
     updateGui(
       {
         numbers: [
-          ["debug1", -1.0, 1.0, 0.001, true]
-          , ["debug10", -10.0, 10.0, 0.1, true]
-          , ["debug200", -200.0, 200.0, 1, true]
-        ]}
-      , appData
-      , "debug"
+          ["debug1", -1.0, 1.0, 0.001, true],
+          ["debug10", -10.0, 10.0, 0.1, true],
+          ["debug200", -200.0, 200.0, 1, true]
+        ]},
+      appData,
+      "debug"
     );
 
     gui.add(appData, "sampleName").name("Sample Name");

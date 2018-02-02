@@ -1,21 +1,25 @@
 import { EventDispatcher } from "three";
 
-const URL_FIELDS = ["data"
-                    , "a"
-                    , "b"
-                    , "panX"
-                    , "panY"
-                    , "zoom"];
+const URL_FIELDS = [
+  "data",
+  "a",
+  "b",
+  "panX",
+  "panY",
+  "zoom"
+];
 
-const URL_DEFAULTS = [""
-                      , 0
-                      , 0
-                      , 0
-                      , 0
-                      , 1];
+const URL_DEFAULTS = [
+  "",
+  0,
+  0,
+  0,
+  0,
+  1
+];
 
 function deconstructUrl(url) {
-  const fragmentStart = url.indexOf('#');
+  const fragmentStart = url.indexOf("#");
   if (fragmentStart == -1)
     return URL_DEFAULTS;
   let fragment = url.substring(fragmentStart + 1);

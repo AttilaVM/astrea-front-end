@@ -57,7 +57,7 @@ function voxelBuilder(
       }
     }
     let coordinates = new Vector3(
-        x * scaler
+      x * scaler
       , y * scaler
       , z * scaler * zScaler
     );
@@ -86,21 +86,22 @@ export function buildParticleSystem(
   let geo = new Geometry();
   let stackGeometry = new Geometry();
   voxelBuilder(
-    voxelData
-    , voxelDimensions
-    , inCubeScaler
-    , zScaler
-    , stackGeometry);
+    voxelData,
+    voxelDimensions,
+    inCubeScaler,
+    zScaler,
+    stackGeometry
+  );
   console.log(stackGeometry);
   const particleMaterial =
     new PointsMaterial({
-      color: 0x6fa2ff
-      , size: particleSize
-      , lights: false
-      , vertexColors: VertexColors
-      , transparent: true
-      , blending: CustomBlending
-      , depthWrite: false
+      color: 0x6fa2ff,
+      size: particleSize,
+      lights: false,
+      vertexColors: VertexColors,
+      transparent: true,
+      blending: CustomBlending,
+      depthWrite: false
     });
   particleMaterial.blendEquation = MaxEquation;
   const particleSystem =

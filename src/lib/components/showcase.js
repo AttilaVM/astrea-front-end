@@ -11,36 +11,39 @@ function addSampleCard(sampleName, thumbImgURL, data) {
   );
 
   const cardDiv = createElement(
-    "div"
-    , {draggable: "true"}
-    , ["cardLayout", "hCenter", "noShrink", "card"]
+    "div",
+    {draggable: "true"},
+    ["cardLayout", "hCenter", "noShrink", "card"]
   );
   const thumbImg = createElement(
-    "img"
-    , {
-      src: thumbImgURL
-      , height: 185
-      , alt: sampleName
-    }
-    , ["thumbLayout"
-       , "clickable"
-       , "enlargeOnHover"
-       , "fadeBorderIn"
-      ]
+    "img",
+    {
+      src: thumbImgURL,
+      height: 185,
+      alt: sampleName
+    },
+    [
+      "thumbLayout",
+      "clickable",
+      "enlargeOnHover",
+      "fadeBorderIn"
+    ]
   );
 
   const infoBox = createElement(
-    "div"
-    , {}
-    , ["infoTextLayout", "infoText"]
+    "div",
+    {},
+    ["infoTextLayout", "infoText"]
   );
 
-  addParagraphs(infoBox
-                , [  `${sampleName}`
-                   , `${date}`
-                   , `${data.xScale}:${data.yScale}:${data.zScale}`]
-                , {}
-                , ["cardText"]);
+  addParagraphs(
+    infoBox
+    , [
+      `${sampleName}`,
+      `${date}`,
+      `${data.xScale}:${data.yScale}:${data.zScale}`]
+    , {}
+    , ["cardText"]);
 
   cardDiv.appendChild(thumbImg);
   cardDiv.appendChild(infoBox);

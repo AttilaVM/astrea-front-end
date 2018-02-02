@@ -21,8 +21,10 @@ export function cuboidNormalizer(cubeDims) {
 }
 
 export function geoLength(arr) {
-  return sqrt(apply(sum
-                    , map(pow2, arr)));
+  return sqrt(apply(
+    sum,
+    map(pow2, arr)
+  ));
 }
 
 /**

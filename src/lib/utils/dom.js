@@ -32,17 +32,17 @@ export function addParagraphs(targetElem, strArr, attr = {}, classList = []) {
 
 export function addVideo(sourceList, width, height, classList, fallback){
   const video= createElement(
-    "video"
-    ,{width: width
-      , autoplay: ""
-      , height: height
-     }
+    "video",
+    { width: width,
+      autoplay: "",
+      height: height
+    }
   );
 
   for (let source of sourceList) {
     let sourceElem = createElement
-    ("source"
-     , {src: source.src, type: source.type});
+    ( "source",
+      {src: source.src, type: source.type});
     video.appendChild(sourceElem);
   }
 

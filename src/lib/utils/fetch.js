@@ -24,12 +24,12 @@ export function fetchFile(url, transformFun, isValid) {
 export function fetchImg(url, transformFun) {
   const img = new Img();
   promise = new Promise((resolve, reject) => {
-      img.onload = () => {
-        if (transformFun)
-          resolve(transformFun(img));
-        else
-          resolve(img);
-      };
+    img.onload = () => {
+      if (transformFun)
+        resolve(transformFun(img));
+      else
+        resolve(img);
+    };
     img.onerror = (err) =>  reject(err);
   });
   img.src = url;

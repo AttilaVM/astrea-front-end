@@ -19,16 +19,16 @@ function calcCamLocAxis(mat) {
   const zAxis = new Vector3();
   mat.extractBasis(xAxis, yAxis, zAxis);
   mat.makeBasis(xAxis.normalize()
-                , yAxis.normalize()
-                , zAxis.normalize());
+    , yAxis.normalize()
+    , zAxis.normalize());
   return mat;
 }
 
 function Emitter() {
   this.rotate = function rotate(sphericalPosition) {
     this.dispatchEvent(
-      {type: "rotate"
-       , sphericalPosition: sphericalPosition});
+      {type: "rotate",
+        sphericalPosition: sphericalPosition});
   };
 
   this.pan = function pan() {
@@ -36,17 +36,19 @@ function Emitter() {
   };
 
   this.zoom = function zoom(zoom) {
-    this.dispatchEvent({type: "zoom"
-                        , zoom: zoom});
+    this.dispatchEvent({type: "zoom",
+      zoom: zoom});
   };
 }
 Object.assign(Emitter.prototype, EventDispatcher.prototype);
 
-export function registerOrthoControls(camera
-                                      , targetElem
-                                      , minZoom
-                                      , maxZoom
-                                      , opts = {}) {
+export function registerOrthoControls(
+  camera,
+  targetElem,
+  minZoom,
+  maxZoom,
+  opts = {}
+) {
 
   const emitter = new Emitter();
   const sensitivity = opts.sensitivity || DEFUALT_SENSITIVITY;
@@ -120,8 +122,8 @@ export function registerOrthoControls(camera
     camLocalAxis.extractBasis(vec1, vec2, vec3);
     vec1 =
       vec1
-      .multiplyScalar(panX)
-      .add(vec2.multiplyScalar(panY));
+        .multiplyScalar(panX)
+        .add(vec2.multiplyScalar(panY));
     camera.position.add(vec1);
     target.add(vec1);
     camera.updateProjectionMatrix();
@@ -173,8 +175,8 @@ export function registerOrthoControls(camera
 
     rotateCam(a, b, 3);
     emitter.rotate(camera.position
-                   .clone()
-                   .sub(target));
+      .clone()
+      .sub(target));
   }
   function rotateEnd(e) {
     if (e.clientX) {
