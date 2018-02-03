@@ -1,13 +1,10 @@
 [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
-<img align="right" src="./doc/img/logo.png" alt="Astrea logo which is a stylized image of the constellation Virgo">
+<img style="margin-bottom:55px" align="right" src="./doc/img/logo.png" alt="Astrea logo which is a stylized image of the constellation Virgo">
 
-# Astrea scientific Volume Renderer (Front End)
+# Astrea Scientific Volume Renderer (Front End)
 
 Astrea is a WebGL based, free and open-source, performant 3D viewer for scientific volumetric data, such as CT, MR or confocal microscopy results.
-
-![Astrea usage gif](./doc/img/useage_short.gif "Astrea Usage")
-Watch [longer version](https://youtu.be/NAFFz4ExEes)
 
 ## Features
 
@@ -22,6 +19,10 @@ Watch [longer version](https://youtu.be/NAFFz4ExEes)
 - Save your sample.
 
 ## Usage
+
+![Astrea usage gif](./doc/img/useage_short.gif "Astrea Usage")
+
+Watch [longer version](https://youtu.be/NAFFz4ExEes)
 
 Please keep in mind, this project is far from completion, it hasn't been tested on a wide variety of browsers and platforms, and still misses many planned features. However, its static (no back-end) version  should be fine to use with a modern Chrome browser on Desktop.
 
