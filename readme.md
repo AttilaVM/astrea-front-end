@@ -1,63 +1,81 @@
-# TODO #
+[![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
-- [X] Decode data to pure voxel representation.
-- [X] Write a particle base volume renderer.
-- [X] Write a Three.js based volumetric renderer.
-- [X] Discover a possibility of mipmaping
-- [X] Write volumetric shader.
-- [X] Volumetric frustrum culling
-- [X] Add slice rendering alongside nearest neighbor and linear interpolation
-- [ ] Webgl limits texture size by its highest dimmension. So I must write a rectangular montage instead of a vertical one.
-- [ ] Option to change background color
-- [X] add gui folders/categories
-  - example: https://workshop.chromeexperiments.com/examples/gui/#3--Folders
-- [ ] connect to code climate
-- [ ] Camera Control should log its state as an URL, which would provide the possibility to share user views, and as dat.gui state als to save different views between sessions.
-  - example: https://workshop.chromeexperiments.com/examples/gui/#5--Saving-Values
-  - example: https://workshop.chromeexperiments.com/examples/gui/#9--Updating-the-Display-Automatically
-- [ ] Make gui not selectable while moving camera, to avoid accidental gui element selection.
-- [ ] Window scale responsivness.
-- [ ] Separate Orthographics Camera Control to its own module
-- [ ] Camera view slicer
-- [ ] Front-end data validaton
-- [ ] VR gui
-- [ ] ranged sliders for xyz clipping
-- [ ] Dive into the shader
-  - [ ] near clipping
-  - [ ] dynamic volumetric data reshape
-- [ ] Non realtime rendering
+<img align="right" src="./doc/img/logo.png" alt="Astrea logo which is a stylized image of the constellation Virgo">
 
-## Optimalization ##
+# Astrea scientific Volume Renderer (Front End)
 
-- [ ] while paning render only the new piercing points in the camera space.
-- [ ] while zooming-in only render in a given frame frequency, sclae up the render result in the rest
+Astrea is a WebGL based, free and open-source, performant 3D viewer for scientific volumetric data, such as CT, MR or confocal microscopy results.
 
-## Sources ##
+![Astrea usage gif](./doc/img/useage_short.gif "Astrea Usage")
+Watch [longer version](https://youtu.be/NAFFz4ExEes)
 
-### three.js examples ###
+## Features
 
-* kinect
+### Without back-end
 
-### Basic ###
-- https://en.wikipedia.org/wiki/Scalar_field
-- https://en.wikipedia.org/wiki/Voxel
-- https://en.wikipedia.org/wiki/Volume_rendering
+- Upload and interactively display your volume data.
+- Correct non-isodiametric voxel information.
+- Crop to sub-volume.
 
-### Advenced ###
-- Book: Production volume rendering
+### With back-end
 
-### Practical ###
-- http://www.lebarba.com/ and its resources
+- Save your sample.
 
+## Usage
 
-## Questions ##
-- Should I do data preprocessing, like Noise reduction?
+Please keep in mind, this project is far from completion, it hasn't been tested on a wide variety of browsers and platforms, and still misses many planned features. However, its static (no back-end) version  should be fine to use with a modern Chrome browser on Desktop.
 
-## cljs vs. js ##
-[performance](https://numergent.com/2015-12/ClojureScript-performance-revisited.html) would be statisfying
+## Roadmap
 
-## Libaries ##
--
-- pako is a javascript port of zlib with cljsjs support with node and browser support.
-[pako](https://github.com/nodeca/pako)
-[zlib](https://zlib.net/)
+### Write JS unit tests
+
+Until this point I was mostly experimenting, without solid expectations, now I learned enough to form and express explicit expectations as unit tests.
+
+### Rewrite app to handle state, preferably with Elm or Redux
+
+This is a big choice with huge consequences, using Elm would be way better for code clarity and quality, however, it may introduce some performance issues. So I will make some experiments first.
+
+### GLSL code generation and testing
+
+GLSL code is obviously hard to unit test, thankfully I kept it short, but to go further I should find a way to ensure reliability.
+
+So I will research and experiment on this topic.
+
+There are some tools based on Google's glsl-unit, which may be proven useful:
+
+- [glslprep](https://github.com/tschw/glslprep.js)
+- [glsl-man](https://github.com/lammas/glsl-man)
+
+### Increase volume resolution
+
+WebGL limits texture size by its highest dimension. So I must generate a grid montage instead of the currently used vertical one.
+
+This will exponentially increase the volume sampling resolution, and most likely make the real-time rendering not so real-time. To counter this I have two choices.
+
+#### mipmapping (preferred)
+
+During camera motion my shader code should operate on a mipmap volume texture, then when it ends render the full-res volume texture. This would be the most elegant approach, and it requires only minor changes.
+
+#### Dynamic ray sampling resolution in the fragment shader.
+
+This would highly increase the fragment shader complexity, and possibly less performant than mipmapping.
+
+### Revisit GLSL code
+
+GLSL code performs fine for a pre-alpha release, even though this is my first experience with GPU programming. However, it has room for improvement.
+
+I should explore the deeper domains of linear algebra and projection geometry to find more powerful ways to implement the volume renderer.
+
+### Rethink GUI
+
+`dat.gui` is nice, but has no ranged sliders. It is not so hard to extend, so if I can make it elegantly interoperate with Elm or Redux, then I'll improve it, otherwise I'll search or write a new GUI module.
+
+### User and asset management
+
+### Annotation capability
+
+### Reproducible sample/view state
+
+### Write user documentation
+
+### First major release
