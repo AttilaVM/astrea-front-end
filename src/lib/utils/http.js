@@ -11,14 +11,12 @@ export function uploadSample(appData, sampleBlob, screenShotBlob) {
   formData.append("voxel_img", sampleBlob, sampleFileName);
   formData.append("thumb_img", screenShotBlob, sampleFileName);
   formData.append("app_data", appDataFile);
-  console.log(formData);
   const xhr = new XMLHttpRequest();
   xhr.open(
     "POST",
     sampleName,
     true
   );
-  console.log(xhr);
   xhr.onload = () => {
     appDispatcher.upload(xhr.status);
   };

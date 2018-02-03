@@ -73,7 +73,6 @@ export function registerOrthoControls(
 
     // Realize state
     camera.updateProjectionMatrix();
-    console.log(camera.bottom, e.deltaY);
 
     emitter.zoom(camera.zoom);
   }

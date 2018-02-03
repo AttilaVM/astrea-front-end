@@ -35,7 +35,6 @@ export function getRenderCtrl(appContainer, serverAddr) {
         fragmentShader,
         sampleData
       ] = values;
-      console.log(sampleData);
       /**
          * The voxel source texture may downscaled by three.js's WebGL render to adapt to the video card. That case the scale variable is going to downscaled too.
          */

@@ -65,7 +65,6 @@ export function initCellvis(
 
   }
   else {
-    console.log(voxelData);
     voxelSrc = voxelData;
     voxelDimensions = [
       voxelData.width,
@@ -75,8 +74,6 @@ export function initCellvis(
     zScaler = 1;
     metaData = null;
   }
-
-  console.log("voxelDimensions", voxelDimensions);
 
   function AppData() {
     // Development sate

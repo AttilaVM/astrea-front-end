@@ -49,7 +49,6 @@ function addSampleCard(sampleName, thumbImgURL, data) {
   cardDiv.appendChild(infoBox);
 
   thumbImg.addEventListener("mouseup", () => {
-    console.log("UP");
     appDispatcher.download(data);
   });
 
@@ -74,7 +73,6 @@ export function addShowcase() {
   fetchFile("data", (JSON.parse))
     .then((data) => {
       for (let sample of data) {
-        console.log(data);
         showcase.appendChild(addSampleCard(
           sample.sampleName
           , sample.thumbImgPath

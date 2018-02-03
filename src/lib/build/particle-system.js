@@ -92,7 +92,6 @@ export function buildParticleSystem(
     zScaler,
     stackGeometry
   );
-  console.log(stackGeometry);
   const particleMaterial =
     new PointsMaterial({
       color: 0x6fa2ff,
