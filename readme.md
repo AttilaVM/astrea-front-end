@@ -29,7 +29,7 @@ Please keep in mind, this project is far from completion, it hasn't been tested 
 ### Usage without back-end
 
 1. Go to this [site](https://attilavm.github.io/astrea-front-end/)
-2. Click on the plus sign, upload your slices as an image sequence. They must be uniform in scale. Currently only the image formats which have support from you browser will work, so no `.tif` or `.dicom` yet. I recommend you to use `.png`. For a simple test run I made a [downloadable sample](https://www.dropbox.com/s/ojd8c99v5qli0g2/mr.zip?dl=0), you can find the original `.tif` sequence version at [The Stanford volume data archive](https://graphics.stanford.edu/data/voldata/voldata.html)
+2. Click on the plus sign, upload your slices as an image sequence (a list of image files, not a directory or an archive). They must be uniform in scale. Currently only the image formats which have support from you browser will work, so no `.tif` or `.dicom` yet. I recommend you to use `.png`. For a simple test run I made a [downloadable sample](https://www.dropbox.com/s/ojd8c99v5qli0g2/mr.zip?dl=0), you can find the original `.tif` sequence version at [The Stanford volume data archive](https://graphics.stanford.edu/data/voldata/voldata.html)
 
 ### Usage with back-end
 
