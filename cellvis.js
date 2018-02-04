@@ -58471,7 +58471,7 @@ function initCellvis(containerElem, voxelData, vertexShader, fragmentShader) {
     voxelSrc = voxelData.voxelSrc;
     voxelDimensions = voxelData.scale;
     zScaler = voxelData.zScaler;
-    
+
   } else if (voxelData.hasOwnProperty("sampleName")) {
     voxelSrc = voxelData.sampleImgPath;
     voxelDimensions = [voxelData.xScale, voxelData.yScale, voxelData.zScale];
@@ -58480,7 +58480,7 @@ function initCellvis(containerElem, voxelData, vertexShader, fragmentShader) {
     voxelSrc = voxelData;
     voxelDimensions = [voxelData.width, voxelData.height / voxelData.sliceNum, voxelData.sliceNum];
     zScaler = 1;
-    
+
   }
 
   function AppData() {
@@ -58839,15 +58839,15 @@ function addImgLoaderBtn() {
   }, ["noInteraction", "noSelect", "fillParent"]);
 
   var animation = addVideo([{
-    src: "/img/icons/context_icon.mp4",
+    src: "img/icons/context_icon.mp4",
     type: "video/mp4"
   }, {
-    src: "/img/icons/context_icon.ogv",
+    src: "img/icons/context_icon.ogv",
     type: "video/ogg"
   }], 250, 250, ["noSelect", "noInteraction"], icon);
 
   var plusSign = createElement("img", {
-    src: "/img/icons/plus_sign.svg",
+    src: "img/icons/plus_sign.svg",
     alt: "Click to load a new sample."
   }, ["plusSignLayout", "plusSign"]);
 
@@ -59057,3 +59057,4 @@ return exports;
 
 }({}));
 //# sourceMappingURL=cellvis.js.map
+           
