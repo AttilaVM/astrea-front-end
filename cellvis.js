@@ -58839,15 +58839,15 @@ Some credit for this helper goes to http://github.com/YuzuJS/setImmediate
     }, ["noInteraction", "noSelect", "fillParent"]);
 
     var animation = addVideo([{
-      src: "context_icon.mp4",
+      src: "https://cdn.rawgit.com/AttilaVM/astrea-front-end/gh-pages/context_icon.mp4",
       type: "video/mp4"
     }, {
-      src: "context_icon.ogv",
+      src: "https://cdn.rawgit.com/AttilaVM/astrea-front-end/gh-pages/context_icon.ogv",
       type: "video/ogg"
     }], 250, 250, ["noSelect", "noInteraction"], icon);
 
     var plusSign = createElement("img", {
-      src: "plus_sign.svg",
+      src: "https://cdn.rawgit.com/AttilaVM/astrea-front-end/gh-pages/context_icon.mp4",
       alt: "Click to load a new sample."
     }, ["plusSignLayout", "plusSign"]);
 
@@ -59057,4 +59057,3 @@ Some credit for this helper goes to http://github.com/YuzuJS/setImmediate
 
 }({}));
 //# sourceMappingURL=cellvis.js.map
-                                         
