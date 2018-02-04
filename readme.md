@@ -36,6 +36,18 @@ Please keep in mind, this project is far from completion, it hasn't been tested 
 You can find the instructions [here](https://github.com/AttilaVM/astrea-back-end)
 Be warned the only place where this back-end has been used, yet, is my notebook, this will change in the future so I recommend you to wait.
 
+### How to build the front-end
+
+```
+git clone git@github.com:AttilaVM/astrea-front-end.git
+cd astrea-front-end
+npm install
+./setup.sh
+gulp
+# in other terminal
+rollup  -w -c rollup.dev.js
+```
+
 ## Roadmap
 
 ### Write JS unit tests
