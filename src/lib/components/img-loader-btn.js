@@ -13,7 +13,7 @@ export function addImgLoaderBtn() {
   const icon = createElement(
     "img",
     {
-      src: "img/icons/context_icon.mp4",
+      src: "icons/context_icon.mp4",
       width: 250,
       height: 250
     //, alt: "Clickable icon to add new volume sample"
@@ -24,11 +24,11 @@ export function addImgLoaderBtn() {
   const animation = addVideo(
     [
       {
-        src: "/img/icons/context_icon.mp4",
+        src: "icons/context_icon.mp4",
         type: "video/mp4"
       },
       {
-        src: "/img/icons/context_icon.ogv",
+        src: "icons/context_icon.ogv",
         type: "video/ogg"
       }
     ],
@@ -41,7 +41,7 @@ export function addImgLoaderBtn() {
   const plusSign = createElement(
     "img",
     {
-      src: "/img/icons/plus_sign.svg",
+      src: "/icons/plus_sign.svg",
       alt: "Click to load a new sample."
     },
     ["plusSignLayout", "plusSign"]

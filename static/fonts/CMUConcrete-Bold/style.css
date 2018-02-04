@@ -1,0 +1,13 @@
+/* font converted using font-converter.net. thank you! */
+@font-face {
+  font-family: "CMUConcrete-Bold";
+  src: url("./fonts/cmunobx.eot"); /* IE9 Compat Modes */
+  src: url("./fonts/cmunobx.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("./fonts/cmunobx.otf") format("opentype"), /* Open Type Font */
+    url("./fonts/cmunobx.svg") format("svg"), /* Legacy iOS */
+    url("./fonts/cmunobx.ttf") format("truetype"), /* Safari, Android, iOS */
+    url("./fonts/cmunobx.woff") format("woff"), /* Modern Browsers */
+    url("./fonts/cmunobx.woff2") format("woff2"); /* Modern Browsers */
+  font-weight: normal;
+  font-style: normal;
+}

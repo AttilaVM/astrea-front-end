@@ -1,7 +1,7 @@
 import babel from "rollup-plugin-babel";
-import rootImport from 'rollup-plugin-root-import';
+import rootImport from "rollup-plugin-root-import";
 import resolve from "rollup-plugin-node-resolve";
-const commonjs = require('rollup-plugin-commonjs');
+const commonjs = require("rollup-plugin-commonjs");
 import eslint from "rollup-plugin-eslint";
 
 function glsl() {
@@ -19,8 +19,8 @@ function glsl() {
           .replace( /\n{2,}/g, "\n" ) // # \n+ to \n
       ) + ";";
       return {
-        code: transformedCode
-        ,map: { mappings: "" }
+        code: transformedCode,
+        map: { mappings: "" }
       };
 
     }
@@ -29,29 +29,29 @@ function glsl() {
 }
 
 export default {
-  entry: "src/index.js"
-  ,plugins: [
-    glsl()
-    , eslint({
+  entry: "src/index.js",
+  plugins: [
+    glsl(),
+    eslint({
       exclude: [
         "src/styles/**"
-      ]})
-    , babel({ babelrc: false
-              , presets: ['es2015-rollup']
-       , exclude: "node_modules/**"
-            })
-    , rootImport({
+      ]}),
+    babel({ babelrc: false,
+      presets: ["es2015-rollup"],
+      exclude: "node_modules/**"
+    }),
+    rootImport({
       root: `${__dirname}/src`,
-      useEntry: 'prepend',
-      extensions: '.js'
-    })
+      useEntry: "prepend",
+      extensions: ".js"
+    }),
     // , commonjs({
     //   include: 'node_modules/**'
     // })
-    , resolve({
+    resolve({
       browser: true
-    })
-    , commonjs()
+    }),
+    commonjs()
     // , resolve({
     //   // use "module" field for ES6 module if possible
     //   module: true // Default: true
@@ -92,17 +92,17 @@ export default {
     //   //		moduleDirectory: 'js_modules'
     //   // }
     // })
-  ]
-  ,sourceMap: true
-  ,targets: [
+  ],
+  sourceMap: true,
+  targets: [
     {
-      format: "iife"
-      ,moduleName: "CellVis"
-      ,dest: "app/dist/cellvis.js"
-    }
-    ,{
-      format: "es"
-      ,dest: "app/dist/cellvis.module.js"
+      format: "iife",
+      moduleName: "CellVis",
+      dest: "./dist/cellvis.js"
+    },
+    {
+      format: "es",
+      dest: "./dist/cellvis.module.js"
     }
   ]
 };

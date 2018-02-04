@@ -5,7 +5,7 @@ data
 out
 *.log
 /**/#*
-app/dist
+dist
 **/.tern-port
 /app/demo/cellvis.js
 /app/demo/cellvis.js.map
