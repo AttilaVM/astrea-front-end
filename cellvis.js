@@ -58847,7 +58847,7 @@ Some credit for this helper goes to http://github.com/YuzuJS/setImmediate
     }], 250, 250, ["noSelect", "noInteraction"], icon);
 
     var plusSign = createElement("img", {
-      src: "https://github.com/AttilaVM/astrea-front-end/blob/gh-pages/plus_sign.svg",
+      src: "https://raw.githubusercontent.com/AttilaVM/astrea-front-end/gh-pages/plus_sign.svg",
       alt: "Click to load a new sample."
     }, ["plusSignLayout", "plusSign"]);
 
@@ -59057,4 +59057,3 @@ Some credit for this helper goes to http://github.com/YuzuJS/setImmediate
 
 }({}));
 //# sourceMappingURL=cellvis.js.map
-          
