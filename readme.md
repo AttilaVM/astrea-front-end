@@ -44,7 +44,7 @@ cd astrea-front-end
 npm install
 ./setup.sh
 gulp
-# in other terminal
+# in another terminal
 rollup  -w -c rollup.dev.js
 ```
 
