@@ -43,12 +43,23 @@ git clone git@github.com:AttilaVM/astrea-front-end.git
 cd astrea-front-end
 npm install
 ./setup.sh
-gulp
+gulp template # build html
+gulp style    # build css
+gulp          # automatic build on pug or stylus soruce change
 # in another terminal
-rollup  -w -c rollup.dev.js
+rollup  -w -c rollup.dev.js # automatic build on JavaScript source change
+```
+
+then start with
+
+```
+cd dist
+python3 -m http.server 8000
 ```
 
 ## Roadmap
+
+### Simplify dev architecture
 
 ### Write JS unit tests
 
