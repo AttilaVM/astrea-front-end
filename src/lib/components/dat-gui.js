@@ -2,6 +2,7 @@ import { EventDispatcher } from "three";
 import { camelCaseToWords } from "/lib/utils/text.js";
 import { screenShot } from "/lib/utils/canvas.js";
 import { uploadSample } from "/lib/utils/http.js";
+import dat from "dat.gui";
 
 const optionDict = {
   interpolation: {
@@ -34,7 +35,8 @@ export function registerGui(
   Object.assign(Emitter.prototype, EventDispatcher.prototype);
 
   if (dat) {
-    let gui = new dat.GUI();
+    const gui = new dat.GUI;
+    console.log(dat);
     const emitter = new Emitter();
     emitter.teardownGui = function teardownGui() {
       gui.destroy();
