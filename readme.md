@@ -33,8 +33,31 @@ Please keep in mind, this project is far from completion, it hasn't been tested 
 
 ### Usage with back-end
 
-You can find the instructions [here](https://github.com/AttilaVM/astrea-back-end)
-Be warned the only place where this back-end has been used, yet, is my notebook, this will change in the future so I recommend you to wait.
+#### Using the built-in database
+
+If you set up your docker right this simple command will be suffice.
+
+```
+docker run -p 9000:3000 astrea:easy
+```
+
+`-p 9000:3000` publishes the port 3000 of the container to the port 9000 of the host, so you can change the first value to any valid port number, but not the second one. This also means that you can access Astrea by typing `http://localhost:9000` in your browser.
+
+#### Using your own database
+
+```
+docker run -p 8080:3000 \
+                  -e DB_USER=DB_USERNAME \
+                  -e DB_ID=DB_ID \
+                  -e DB_PASS=DB_PASS \
+                  -e DB_DIALECT=postgres \
+                  -e DB_HOST=DB_host \
+                  astrea:easy
+```
+
+Here you can configure Astrea with your own database by passing its authentication options with environmental variables.
+
+In the case if you don't want to use docker, you can find the code [here](https://github.com/AttilaVM/astrea-back-end). It is not recomanded, becuse at this stage of development I do not have the time and resources to respond any kind of issues, which are caused by a not perfectly reproducued runtime environment.
 
 ### How to build the front-end
 
