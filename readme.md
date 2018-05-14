@@ -35,7 +35,7 @@ Please keep in mind, this project is far from completion, it hasn't been tested 
 
 #### Using the built-in database
 
-If you set up your docker right this simple command will be suffice.
+If you set up your docker right, this simple command will suffice.
 
 ```
 docker run -p 9000:3000 astrea:easy
@@ -57,7 +57,7 @@ docker run -p 8080:3000 \
 
 Here you can configure Astrea with your own database by passing its authentication options with environmental variables.
 
-In the case if you don't want to use docker, you can find the code [here](https://github.com/AttilaVM/astrea-back-end). It is not recomanded, becuse at this stage of development I do not have the time and resources to respond any kind of issues, which are caused by a not perfectly reproducued runtime environment.
+In case if you don't want to use docker, you can find the code [here](https://github.com/AttilaVM/astrea-back-end). It is not recommended, because at this stage of development I do not have the time and resources to respond to any kind of issues which are caused by a not perfectly reproducued runtime environment.
 
 ### How to build the front-end
 
@@ -105,7 +105,7 @@ There are some tools based on Google's glsl-unit, which may be proven useful:
 
 ### Increase volume resolution
 
-WebGL limits texture size by its highest dimension. So I must generate a grid montage instead of the currently used vertical one.
+WebGL limits texture size by its highest dimension. So I must generate a grid montage texture instead of the currently used vertical one.
 
 This will exponentially increase the volume sampling resolution, and most likely make the real-time rendering not so real-time. To counter this I have two choices.
 
@@ -115,7 +115,7 @@ During camera motion my shader code should operate on a mipmap volume texture, t
 
 #### Dynamic ray sampling resolution in the fragment shader.
 
-This would highly increase the fragment shader complexity, and possibly less performant than mipmapping.
+This would highly increase the fragment shader complexity, and possibly is less performant than mipmapping.
 
 ### Revisit GLSL code
 
